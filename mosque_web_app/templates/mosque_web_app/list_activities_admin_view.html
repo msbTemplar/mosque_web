@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}About the Mosque Admin {% endblock %}
+{% block meta_description %} This is the web site of the greatest Mosque {% endblock %}
+{% block content %}
+
+
+        
+        <!-- Hero Start -->
+        <div class="container-fluid hero-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="hero-header-inner animated zoomIn">
+                            <h1 class="display-1 text-dark">List Activities Admin</h1>
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                                <li class="breadcrumb-item text-dark" aria-current="page">List Activities Admin</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Hero End -->
+
+    {% if events_404_error_title %}
+    <center>
+        <h2>Email sent correctly {{ events_404_error_title }}</h2>
+        <h3>Informations registred correctly ... </h3>
+        <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
+    </center>
+    {% else %}
+        
+
+        <!-- About Start -->
+        <div class="container-fluid contact py-5">
+            <div class="container py-5">
+                <div class="text-center mx-auto mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+                    <p class="fs-5 text-uppercase text-primary">List Activities Admin</p>
+                    <h1 class="display-3">List Activities Admin For Any Queries</h1>
+                    <p class="mb-0">The contact form is currently inactive. Get a functional and working contact form with Ajax & PHP in a few minutes. Just copy and paste the files, add a little code and you're done. <a href="https://htmlcodex.com/404-form">Download Now</a>.</p>
+                </div>
+                <div class="row g-4 wow fadeIn" data-wow-delay="0.3s">
+                                        
+                    <h2>List of the Events Admin </h2>
+                <table class="table table-striped table-hover table-bordered border-primary shadow rounded custom-table">
+                    <thead>
+                      <tr>
+                        
+                        <th scope="col" class="text-center">activity title</th>
+                        <th scope="col" class="text-center">activity mosque_development</th>
+                        <th scope="col" class="text-center">description activity mosque development</th>
+                        <th scope="col" class="text-center">activity charity donation</th>
+                        <th scope="col" class="text-center">description activity charity donation</th>
+                        <th scope="col" class="text-center">activity quran learning</th>
+                        <th scope="col" class="text-center">description activity quran learning</th>
+                        <th scope="col" class="text-center">activity hadith sunnah</th>
+                        <th scope="col" class="text-center">description activity hadith sunnah</th>
+                        <th scope="col" class="text-center">activity parent education</th>
+                        <th scope="col" class="text-center">description activity parent education</th>
+                        <th scope="col" class="text-center">activity help orphans</th>
+                        <th scope="col" class="text-center">description activity help orphans</th>
+                        <th scope="col" class="text-center">activity testimonial</th>
+                        <th scope="col" class="text-center">activity title testimonial</th>
+                        
+                        
+                    
+                        {% if user.is_superuser %}
+                        <th scope="col" class="text-center">Actualiser</th>
+                        {% endif %}
+                        {% if user.is_superuser %}
+                        <th scope="col" class="text-center">{% if user.is_authenticated %}Eliminer{% endif %}</th>
+                        {% endif %}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for lista_activities_admin_view in la_lista_activities_admin_view %}
+                      <tr>
+                        <!--<th class="text-wrap" style="max-width: 150px;" scope="row">{{appointment.appointment_service}}</th>
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">{{appointment.appointment_doctor}}</th>
+                      -->
+                          
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_activities_admin_view.activity_title}}</th>
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_activities_admin_view.activity_mosque_development}}</th>
+                        <td>
+                          <a class="btn btn-warning" href="#" onclick="VerActivitiesDescription1('{{ lista_activities_admin_view.id }}','{{lista_activities_admin_view.description_activity_mosque_development}}','')">Ver activity mosque development
+                            {{ lista_activities_admin_view.id }}</a>
+                        </td>
+                        
+                        <!-- <th class="text-wrap" style="max-width: 150px;" scope="row">
+                          {% if lista_events_admin_view.img_url_event %}
+                              <img src="{{ lista_events_admin_view.img_url_event.url }}" class="card-img-top" alt="{{ lista_events_admin_view.title_event }}">
+                          {% else %}
+                              <img src="/path/to/default/image.jpg" class="card-img-top" alt="Default Image">
+                          {% endif %}
+                      </th> -->
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_activities_admin_view.activity_charity_donation}}</th>
+                        <td>
+                          <a class="btn btn-warning" href="#" onclick="VerActivitiesDescription2('{{ lista_activities_admin_view.id }}','{{lista_activities_admin_view.description_activity_charity_donation}}','')">Ver description activity charity donation
+                            {{ lista_activities_admin_view.id }}</a>
+                        </td>
+
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_activities_admin_view.activity_quran_learning}}</th>
+                        <td>
+                          <a class="btn btn-warning" href="#" onclick="VerActivitiesDescription3('{{ lista_activities_admin_view.id }}','{{lista_activities_admin_view.description_activity_quran_learning}}','')">Ver description activity quran learning
+                            {{ lista_activities_admin_view.id }}</a>
+                        </td>
+
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_activities_admin_view.activity_hadith_sunnah}}</th>
+                        <td>
+                          <a class="btn btn-warning" href="#" onclick="VerActivitiesDescription4('{{ lista_activities_admin_view.id }}','{{lista_activities_admin_view.description_activity_hadith_sunnah}}','')">Ver description activity hadith sunnah
+                            {{ lista_activities_admin_view.id }}</a>
+                        </td>
+
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_activities_admin_view.activity_parent_education}}</th>
+                        <td>
+                          <a class="btn btn-warning" href="#" onclick="VerActivitiesDescription5('{{ lista_activities_admin_view.id }}','{{lista_activities_admin_view.description_activity_parent_education}}','')">Ver description activity parent education
+                            {{ lista_activities_admin_view.id }}</a>
+                        </td>
+
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_activities_admin_view.activity_help_orphans}}</th>
+                        <td>
+                          <a class="btn btn-warning" href="#" onclick="VerActivitiesDescription6('{{ lista_activities_admin_view.id }}','{{lista_activities_admin_view.description_activity_help_orphans}}','')">Ver description activity help orphans
+                            {{ lista_activities_admin_view.id }}</a>
+                        </td>
+
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_activities_admin_view.activity_testimonial}}</th>
+
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_activities_admin_view.activity_title_testimonial}}</th>
+
+                        <!-- <th class="text-wrap" style="max-width: 150px;" scope="row">
+                          {% if lista_events_admin_view.file_event %}
+                              <a href="{{ lista_events_admin_view.file_event.url }}" class="btn btn-success" target="_blank">
+                                  Descargar archivo
+                              </a>
+                          {% else %}
+                              No hay archivo disponible
+                          {% endif %}
+                      </th> -->
+                           
+                        {% if user.is_superuser %}
+                        <td style="text-align: center;">
+                          
+                          <a class="btn btn-info" href="{% url 'actualizar_activities_admin' lista_activities_admin_view.id %}">Actualiser {{lista_activities_admin_view.id}}</a>
+                          
+                        </td>
+                        {% endif %}
+                       
+                        {% if user.is_superuser %}
+                        <td style="text-align: center;">
+                          
+                          <a class="btn btn-danger" href="#" onclick="confirmDeleteActivities('{{ lista_activities_admin_view.id }}')">Eliminer {{lista_activities_admin_view.id}}</a>
+                          
+                      </td>
+                      {% endif %}
+                      </tr>
+                      {% endfor %}
+                      
+                    </tbody>
+                  </table> 
+                </div>
+            </div>
+        </div>
+        <!-- About End -->
+        
+{% endif %}   
+
+
+
+
+
+
+{% endblock %}
+
+

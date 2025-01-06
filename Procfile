@@ -1,0 +1,1 @@
+web: gunicorn mosque_web.wsgi --log-file -

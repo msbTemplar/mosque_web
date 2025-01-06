@@ -1,0 +1,126 @@
+simonTemplarFilipMorris
+
+msb.acer@gmail.com
+
+…or create a new repository on the command line
+echo "# cars_reviews" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/simonTemplarFilipMorris/cars_reviews.git
+git push -u origin main
+…or push an existing repository from the command line
+git remote add origin https://github.com/simonTemplarFilipMorris/cars_reviews.git
+git branch -M main
+git push -u origin main
+
+postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}
+
+
+postgresql://postgres:nzfvVdaTXfiOUImwCxyMNqKunYyuysGH@autorack.proxy.rlwy.net:41705/railway
+
+PGPASSWORD=nzfvVdaTXfiOUImwCxyMNqKunYyuysGH psql -h autorack.proxy.rlwy.net -U postgres -p 41705 -d railway
+
+
+
+
+…or create a new repository on the command line
+echo "# cars_reviews" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin git@github.com:msbTemplar/cars_reviews.git
+git push -u origin main
+…or push an existing repository from the command line
+git remote add origin git@github.com:msbTemplar/cars_reviews.git
+git branch -M main
+git push -u origin main
+
+
+
+
+ git remote -v
+origin  https://github.com/simonTemplarFilipMorris/cars_reviews.git (fetch)
+origin  https://github.com/simonTemplarFilipMorris/cars_reviews.git (push)
+(venv) PS C:\proyectos_python_django\cars_reviews> 
+
+git remote set-url origin git@github.com:msbTemplar/cars_reviews.git
+
+git remote set-url origin git@github.com:msbTemplar/cars_reviews.git
+git remote add new-origin git@github.com:msbTemplar/cars_reviews.git
+
+
+
+eval "$(ssh-agent -s)"
+
+ssh-add ~/.ssh/id_ed25519
+
+
+ssh-keygen -t ed25519 -C "tu_correo@ejemplo.com"
+
+
+ls -al ~/.ssh
+
+
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGwFaih9w/qTc791pQldRjc3aZpzA0PIoqdosEPz7lDR tu_correo@ejemplo.com
+
+
+cat ~/.ssh/id_ed25519.pub
+
+
+
+
+
+…or create a new repository on the command line
+echo "# cars_reviews" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/simonTemplarCoin/cars_reviews.git
+git push -u origin main
+…or push an existing repository from the command line
+git remote add origin https://github.com/simonTemplarCoin/cars_reviews.git
+git branch -M main
+git push -u origin main
+
+
+
+git remote set-url origin https://github.com/simonTemplarCoin/cars_reviews.git
+
+git remote remove new-origin
+
+
+git remote add new-origin https://github.com/simonTemplarCoin/cars_reviews.git
+
+git config user.name
+git config user.email
+
+git config --global user.name "tu_nombre_de_usuario"
+git config --global user.email "tu_email@dominio.com"
+
+git config --global user.name simonTemplarCoin  
+
+ git config --global user.name simonCoin
+(venv) PS C:\proyectos_python_django\cars_reviews> git config --global user.mail msb.coin@gmail.com
+
+git credential-manager reject https://github.com
+
+
+0670-27A8
+
+
+https://github.com/login/device/select_account
+
+
+http://127.0.0.1:8000/
+
+https://127.0.0.1:8000/
+
+https://127.0.0.1:8000/
+
+https://127.0.0.1:8000/admin/cars_reviews_app/noticiadiferente/
+
+http://127.0.0.1:8000/
