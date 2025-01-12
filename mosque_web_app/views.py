@@ -5,10 +5,10 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.http import JsonResponse
 import locale
-from .forms import ContactMessageForm,AboutForm,ActivityForm, EventForm,Error404Form,SermonForm,BlogForm, TeamMemberForm, TestimonialForm, NewsletterForm
+from .forms import ContactMessageForm,AboutForm,ActivityForm, EventForm,Error404Form,SermonForm,BlogForm, TeamMemberForm, TestimonialForm, NewsletterForm, AboutImagesForm
 from django.core.exceptions import ValidationError
 import json
-from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial
+from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, AboutImages
 
 # Create your views here.
 
@@ -653,13 +653,42 @@ def eliminar_activities_admin(request, id_activities_admin):
     messages.success(request, "El Activities ha sido eliminado con éxito.")
     return redirect('list_activities_admin_view')  # Reemplaza 'nombre_de_tu_vista' con el nombre de tu vista principal
 
+""" def about(request):
+    abouts = About.objects.all()  # Obtén todos los sermones
+    context = {'abouts': abouts}
+    #context = {'form': ''}
+    return render(request, 'mosque_web_app/about.html',context ) """
+
 def about(request):
-    context = {'form': ''}
-    return render(request, 'mosque_web_app/about.html',context )
+    abouts_images = AboutImages.objects.all()
+    team_members = TeamMember.objects.all()
+    for member in team_members:
+        if member.team_social_links:
+            # Asegúrate de que sea un diccionario válido
+            if isinstance(member.team_social_links, str):
+                try:
+                    member.team_social_links = json.loads(member.team_social_links)
+                except json.JSONDecodeError:
+                    member.team_social_links = {}
+            elif not isinstance(member.team_social_links, dict):
+                member.team_social_links = {}
+        else:
+            member.team_social_links = {}
+    president = TeamMember.objects.filter(team_position="President").first()  # Obtén el presidente (si existe)
+    other_members = TeamMember.objects.exclude(team_position="President")  # Excluye al presidente
+ 
+    try:
+        about = About.objects.latest('id')  # Obtiene el último registro basado en el campo 'id'
+    except About.DoesNotExist:
+        about = None  # Maneja el caso donde no hay registros en la base de datos
+    context = {'about': about, 'abouts_images': abouts_images, 'team_members': team_members, 'president': president,
+        'other_members': other_members,}
+    return render(request, 'mosque_web_app/about.html', context)
+
 
 def about_admin(request):
     if request.method == 'POST':
-        form = AboutForm(request.POST)
+        form = AboutForm(request.POST, request.FILES)
         if form.is_valid():
             # Guardar el registro en la base de datos
             form.save()
@@ -675,10 +704,12 @@ def about_admin(request):
             about_raised = form.cleaned_data['raised']
             about_raised_value = form.cleaned_data['raised_value']
             about_description_raised = form.cleaned_data['description_raised']
+            about_img_url_raised_about = form.cleaned_data['img_url_raised_about']
             about_charity_and_donation = form.cleaned_data['charity_and_donation']
             about_parent_education = form.cleaned_data['parent_education']
             about_hadith_and_sunnah = form.cleaned_data['hadith_and_sunnah']
             about_mosque_development = form.cleaned_data['mosque_development']
+            about_file_about = form.cleaned_data['file_about']
             
             """
             # Enviar el correo electrónico
@@ -701,10 +732,12 @@ def about_admin(request):
             about_raised: {about_raised}
             about_raised_value: {about_raised_value}
             about_description_raised: {about_description_raised}
+            about_img_url_raised_about: {about_img_url_raised_about}
             about_charity_and_donation: {about_charity_and_donation}
             about_parent_education: {about_parent_education}
             about_hadith_and_sunnah: {about_hadith_and_sunnah}
             about_mosque_development: {about_mosque_development}
+            about_file_about: {about_file_about}
             """
             
             # Enviar el correo electrónico
@@ -739,6 +772,66 @@ def eliminar_about_admin(request, id_about_admin):
     about_admin.delete()
     messages.success(request, "El About ha sido eliminado con éxito.")
     return redirect('list_about_admin_view')  # Reemplaza 'nombre_de_tu_vista' con el nombre de tu vista principal
+
+def about_images_admin(request):
+    if request.method == 'POST':
+        form = AboutImagesForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Guardar el registro en la base de datos
+            form.save()
+            
+            # Obtener los datos del formulario
+            about_images_the_about_image = form.cleaned_data['about_images_the_about_image']
+            img_url_about_images = form.cleaned_data['img_url_about_images']
+            
+            """
+            # Enviar el correo electrónico
+            send_mail(
+                'Message from ' + message_name,  # Asunto
+                message_message,  # Mensaje
+                message_email,  # Correo electrónico del remitente
+                ['msb.tesla@gmail.com', 'msb.coin@gmail.com', 'msb.duck@gmail.com', 'msebti2@gmail.com'],  # Correos de destino
+            )
+            """
+            email_content = f"""
+            You have received a new message  {about_images_the_about_image}:
+            
+            about_images_the_about_image: {about_images_the_about_image}
+            img_url_about_images: {img_url_about_images}
+            """
+            
+            # Enviar el correo electrónico
+            send_mail(
+                f'Message from {about_images_the_about_image}',  # Asunto
+                email_content,  # Cuerpo del correo con todos los detalles
+                'msb.caixa@gmail.com',  # Correo electrónico del remitente
+                ['msb.caixa@gmail.com','msb.tesla@gmail.com', 'msb.coin@gmail.com', 'msb.duck@gmail.com', 'msebti2@gmail.com', 'papioles@gmail.com', 'msb.motive@gmail.com', 'msb.acer@gmail.com'],  # Correos de destino
+            )
+            
+            return render(request, 'mosque_web_app/about_images_admin.html', {'about_images_the_about_image': about_images_the_about_image})
+    else:
+        form = AboutImagesForm()
+    
+    return render(request, 'mosque_web_app/about_images_admin.html', {'form': form})
+
+def list_about_images_admin_view(request):
+    la_lista_about_images_admin_view = AboutImages.objects.all()  # Recupera todos los servicios
+    return render(request, 'mosque_web_app/list_about_images_admin_view.html', {'la_lista_about_images_admin_view': la_lista_about_images_admin_view})
+
+def actualizar_about_images_admin(request, id_about_images_admin):
+    about_images_admin = AboutImages.objects.get(pk=id_about_images_admin)
+    form = AboutImagesForm(request.POST or None, request.FILES or None,  instance=about_images_admin)
+    if form.is_valid():
+        form.save()
+        return redirect('list_about_images_admin_view')
+    context = {'about_images_admin': about_images_admin, 'form': form}
+    return render(request, 'mosque_web_app/actualizar_about_images_admin.html', context)
+
+def eliminar_about_images_admin(request, id_about_images_admin):
+    about_images_admin = get_object_or_404(AboutImages, id=id_about_images_admin)
+    about_images_admin.delete()
+    messages.success(request, "El About images ha sido eliminado con éxito.")
+    return redirect('list_about_images_admin_view')  # Reemplaza 'nombre_de_tu_vista' con el nombre de tu vista principal
 
 def contact1(request):
     context = {'form': ''}

@@ -872,7 +872,37 @@
                             if (isConfirmed) {
                                 console.log("el id es : " + id);
                                 // Aquí redireccionamos al usuario para eliminar el registro
-                                window.location.href = `/eliminar_testimonial_admin/${id}`; // Asegúrate de que esta URL sea correcta
+                                window.location.href = `/eliminar_team_admin/${id}`; // Asegúrate de que esta URL sea correcta
+                            } else {
+                                Swal.fire("Cancelled", "Your record has not been deleted :)", "error");
+                            }
+                        });
+                    }
+                });
+            };
+
+            function confirmDeleteAboutImages(id) {
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Aquí se muestra el segundo SweetAlert para informar sobre la eliminación
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your record has been deleted.",
+                            icon: "success",
+                        }).then((isConfirmed) => {
+                            // Verificar si el usuario ha confirmado el segundo SweetAlert
+                            if (isConfirmed) {
+                                console.log("el id es : " + id);
+                                // Aquí redireccionamos al usuario para eliminar el registro
+                                window.location.href = `/eliminar_about_images_admin/${id}`; // Asegúrate de que esta URL sea correcta
                             } else {
                                 Swal.fire("Cancelled", "Your record has not been deleted :)", "error");
                             }

@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, Newsletter
+from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, Newsletter, AboutImages
 import json
 from django.core.exceptions import ValidationError
 
@@ -503,10 +503,12 @@ class AboutForm(forms.ModelForm):
             'raised',
             'raised_value',
             'description_raised',
+            'img_url_raised_about',
             'charity_and_donation',
             'parent_education',
             'hadith_and_sunnah',
             'mosque_development',
+            'file_about',
         ]
         widgets = {
             'about_the_mosque': forms.TextInput(attrs={
@@ -559,6 +561,10 @@ class AboutForm(forms.ModelForm):
                 'placeholder': 'Description of Raised Funds',
                 'style': 'height: 200px;',
             }),
+            'img_url_raised_about': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
             'charity_and_donation': forms.TextInput(attrs={
                 'class': 'form-control border-1 bg-light px-4',
                 'placeholder': 'Charity and Donation',
@@ -579,8 +585,30 @@ class AboutForm(forms.ModelForm):
                 'placeholder': 'Mosque Development',
                 'style': 'height: 55px;',
             }),
+            'file_about': forms.ClearableFileInput(attrs={  # Nuevo widget para file_sermon
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
         }
-        
+
+class AboutImagesForm(forms.ModelForm):
+    class Meta:
+        model = AboutImages
+        fields = [
+            'about_images_the_about_image',
+            'img_url_about_images',
+        ]
+        widgets = {
+            'about_images_the_about_image': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'About the Mosque',
+                'style': 'height: 55px;',
+            }),
+            'img_url_about_images': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+        }
 
 class ContactMessageForm(forms.ModelForm):
     class Meta:

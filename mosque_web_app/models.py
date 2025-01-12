@@ -158,13 +158,23 @@ class About(models.Model):
     raised = models.CharField(max_length=500)
     raised_value = models.CharField(max_length=500)
     description_raised = models.TextField()
+    img_url_raised_about = models.ImageField(upload_to='about_raised_images/', max_length=5500, blank=True, null=True)
     charity_and_donation = models.CharField(max_length=500)
     parent_education = models.CharField(max_length=500)
     hadith_and_sunnah = models.CharField(max_length=500)
     mosque_development = models.CharField(max_length=500)
+    file_about = models.FileField(upload_to='abouts_files/', max_length=5500, blank=True, null=True)  # Para subir 
     
     def __str__(self):
         return f'{self.about_the_mosque} - {self.allah_helps_those}'
+    
+class AboutImages(models.Model):
+    about_images_the_about_image = models.CharField(max_length=500)
+    img_url_about_images = models.ImageField(upload_to='about_images_images/', max_length=5500, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f'{self.about_images_the_about_image} - {self.created_at}'
     
 class Activity(models.Model):
     activity_title = models.CharField(max_length=500)

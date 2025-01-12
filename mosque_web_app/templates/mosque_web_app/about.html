@@ -30,26 +30,44 @@
                 <div class="row g-5 mb-5">
                     <div class="col-xl-6">
                         <div class="row g-4">
-                            <div class="col-6">
+                         <!--    <div class="col-6">
                                 <img src="{% static 'mosque_web_app/img/about-1.jpg' %}" class="img-fluid h-100 wow zoomIn" data-wow-delay="0.1s" alt="">
                             </div>
                             <div class="col-6">
                                 <img src="{% static 'mosque_web_app/img/about-2.jpg' %}" class="img-fluid pb-3 wow zoomIn" data-wow-delay="0.1s" alt="">
                                 <img src="{% static 'mosque_web_app/img/about-3.jpg' %}" class="img-fluid pt-3 wow zoomIn" data-wow-delay="0.1s" alt="">
-                            </div>
+                            </div> -->
+                            {% for abouts_image in abouts_images %}
+                            {% if forloop.counter == 1 %}
+                                <!-- Primera imagen a la izquierda (ocupa dos filas de altura) -->
+                                <div class="col-6">
+                                    <img src="{{ abouts_image.img_url_about_images.url }}" class="img-fluid h-100 wow zoomIn" data-wow-delay="0.1s" alt="Image {{ forloop.counter }}">
+                                </div>
+                            {% elif forloop.counter == 2 %}
+                                <!-- Inicio de la columna derecha -->
+                                <div class="col-6">
+                                    <!-- Segunda imagen arriba -->
+                                    <img src="{{ abouts_image.img_url_about_images.url }}" class="img-fluid pb-3 wow zoomIn" data-wow-delay="0.1s" alt="Image {{ forloop.counter }}">
+                            {% elif forloop.counter == 3 %}
+                                    <!-- Tercera imagen abajo -->
+                                    <img src="{{ abouts_image.img_url_about_images.url }}" class="img-fluid pt-3 wow zoomIn" data-wow-delay="0.1s" alt="Image {{ forloop.counter }}">
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                            
                         </div>
                     </div>
                     <div class="col-xl-6 wow fadeIn" data-wow-delay="0.5s">
-                        <p class="fs-5 text-uppercase text-primary">About THEMosque</p>
-                        <h1 class="display-5 pb-4 m-0">Allah Help Those Who Help Themselves</h1>
-                        <p class="pb-4">Lorem ipsum dolor sit amet elit. Donec tempus eros vel dolor mattis aliquam. Etiam quis mauris justo. Vivamus purus nulla, rutrum ac risus in.</p>
+                        <p class="fs-5 text-uppercase text-primary">{{ about.about_the_mosque }}</p>
+                        <h1 class="display-5 pb-4 m-0">{{ about.allah_helps_those }}</h1>
+                        <p class="pb-4">{{ about.description_about }}s</p>
                         <div class="row g-4 mb-4">
                             <div class="col-md-6">
                                 <div class="ps-3 d-flex align-items-center justify-content-start">
                                     <span class="bg-primary btn-md-square rounded-circle mt-4 me-2"><i class="fa fa-eye text-dark fa-4x mb-5 pb-2"></i></span>
                                     <div class="ms-4">
-                                        <h5>Our Vision</h5>
-                                        <p>Lorem ipsum dolor sit amet tetur nod elit sed</p>
+                                        <h5>{{ about.our_vision }}</h5>
+                                        <p>{{ about.description_our_vision }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -57,8 +75,8 @@
                                 <div class="ps-3 d-flex align-items-center justify-content-start">
                                     <span class="bg-primary btn-md-square rounded-circle mt-4 me-2"><i class="fa fa-flag text-dark fa-4x mb-5 pb-2"></i></span>
                                     <div class="ms-4">
-                                        <h5>Our Mission</h5>
-                                        <p>Lorem ipsum dolor sit amet tetur nod elit sed</p>
+                                        <h5>{{ about.our_mission }}</h5>
+                                        <p>{{ about.description_our_mission }}</p>
                                     </div>
                                 </div>
                             </div>
@@ -66,25 +84,25 @@
                         <div class="bg-light p-3 mb-4">
                             <div class="row align-items-center justify-content-center">
                                 <div class="col-3">
-                                    <img src="{% static 'mosque_web_app/img/about-child.j' %}pg" class="img-fluid rounded-circle" alt="">
+                                    <img src="{{ about.img_url_raised_about.url }}" class="img-fluid rounded-circle" alt="">
                                 </div>
                                 <div class="col-6">
-                                    <p class="mb-0">Lorem ipsum dolor sit amet elit. Donec tempus eros vel dolor mattis aliquam. Etiam quis mauris justo.</p>
+                                    <p class="mb-0">{{ about.description_raised }}</p>
                                 </div>
                                 <div class="col-3">
-                                        <h2 class="mb-0 text-primary text-center">$20,46</h2>
-                                        <h5 class="mb-0 text-center">Raised</h5>
+                                        <h2 class="mb-0 text-primary text-center">{{ about.raised_value }}</h2>
+                                        <h5 class="mb-0 text-center">{{ about.raised }}</h5>
                                 </div>
                             </div>
                         </div>
                         <div class="row g-2">
                             <div class="col-md-6">
-                                <p class="mb-2"><i class="fa fa-check text-primary me-3"></i>Charity & Donation</p>
-                                <p class="mb-0"><i class="fa fa-check text-primary me-3"></i>Parent Education</p>
+                                <p class="mb-2"><i class="fa fa-check text-primary me-3"></i>{{ about.charity_and_donation }}</p>
+                                <p class="mb-0"><i class="fa fa-check text-primary me-3"></i>{{ about.parent_education }}</p>
                             </div>
                             <div class="col-md-6">
-                                <p class="mb-2"><i class="fa fa-check text-primary me-3"></i>Hadith & Sunnah</p>
-                                <p class="mb-0"><i class="fa fa-check text-primary me-3"></i>Mosque Development</p>
+                                <p class="mb-2"><i class="fa fa-check text-primary me-3"></i>{{ about.hadith_and_sunnah }}</p>
+                                <p class="mb-0"><i class="fa fa-check text-primary me-3"></i>{{ about.mosque_development }}</p>
                             </div>
                         </div>
                     </div>
@@ -108,7 +126,7 @@
 
 
         <!-- Team Start -->
-        <div class="container-fluid team py-5">
+       <!--  <div class="container-fluid team py-5">
             <div class="container py-5">
                 <div class="text-center mx-auto mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
                     <p class="fs-5 text-uppercase text-primary">Our Team</p>
@@ -189,8 +207,92 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!-- Team End -->
+
+        <!-- Team Start -->
+<div class="container-fluid team py-5">
+    <div class="container py-5">
+        <div class="text-center mx-auto mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+            <p class="fs-5 text-uppercase text-primary">Our Team</p>
+            <h1 class="display-3">Meet Our Organizer</h1>
+        </div>
+        <div class="row g-5">
+            <!-- Presidente -->
+            <div class="col-lg-4 col-xl-5">
+                <div class="team-img wow zoomIn" data-wow-delay="0.1s">
+                    {% if president and president.team_img_url %}
+                        <img src="{{ president.team_img_url.url }}" class="img-fluid" alt="{{ president.team_full_name }}">
+                    {% else %}
+                        <img src="{% static 'mosque_web_app/img/default-president.jpg' %}" class="img-fluid" alt="Default President">
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-lg-8 col-xl-7">
+                <div class="team-item wow fadeIn" data-wow-delay="0.1s">
+                    {% if president %}
+                        <h1>{{ president.team_full_name }}</h1>
+                        <h5 class="fw-normal fst-italic text-primary mb-4">{{ president.team_position }}</h5>
+                        <p class="mb-4">{{ president.team_description }}</p>
+                    {% else %}
+                        <h1>President Not Available</h1>
+                        <p class="mb-4">No information available for the President at this time.</p>
+                    {% endif %}
+                    <div class="team-icon d-flex pb-4 mb-4 border-bottom border-primary">
+                        <!-- <a class="btn btn-primary btn-lg-square me-2" href=""><i class="fab fa-facebook-f"></i></a>
+                        <a class="btn btn-primary btn-lg-square me-2" href=""><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="btn btn-primary btn-lg-square me-2"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="btn btn-primary btn-lg-square"><i class="fab fa-linkedin-in"></i></a> -->
+
+                        {% for platform, link in president.team_social_links.items %}
+                            <a href="{{ link }}" class="btn btn-primary btn-sm-square me-2" target="_blank">
+                                <i class="fab fa-{{ platform|lower }}"></i>
+                            </a>
+                        {% endfor %}
+                    
+                    
+
+                    </div>
+                </div>
+                <!-- Otros Miembros -->
+                <div class="row g-4">
+                    {% for member in other_members %}
+                    <div class="col-md-4">
+                        <div class="team-item wow zoomIn" data-wow-delay="0.{{ forloop.counter }}s">
+                            {% if member.team_img_url %}
+                                <img src="{{ member.team_img_url.url }}" class="img-fluid w-100" alt="{{ member.team_full_name }}">
+                            {% else %}
+                                <img src="{% static 'mosque_web_app/img/default-member.jpg' %}" class="img-fluid w-100" alt="Default Member">
+                            {% endif %}
+                            <div class="team-content text-dark text-center py-3">
+                                <div class="team-content-inner">
+                                    <h5 class="mb-0">{{ member.team_full_name }}</h5>
+                                    <p class="text-dark">{{ member.team_position }}</p>
+                                    <div class="team-icon d-flex align-items-center justify-content-center">
+                                        <!-- <a class="btn btn-primary btn-sm-square me-2" href=""><i class="fab fa-facebook-f"></i></a>
+                                        <a class="btn btn-primary btn-sm-square me-2" href=""><i class="fab fa-twitter"></i></a>
+                                        <a href="#" class="btn btn-primary btn-sm-square me-2"><i class="fab fa-instagram"></i></a>
+                                        <a href="#" class="btn btn-primary btn-sm-square"><i class="fab fa-linkedin-in"></i></a> -->
+
+                                        {% for platform, link in member.team_social_links.items %}
+                                        <a class="btn btn-primary btn-sm-square me-2" href="{{ link }}" target="_blank">
+                                            <i class="fab fa-{{ platform|lower }}"></i>
+                                        </a>
+                                        {% endfor %}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Team End -->
+
 
 {% endblock %}
         

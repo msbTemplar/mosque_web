@@ -28,6 +28,7 @@ urlpatterns = [
     path('contact/', views.contact, name='contact'),
     path('about/', views.about, name='about'),
     path('about_admin/', views.about_admin, name='about_admin'),
+    path('about_images_admin/', views.about_images_admin, name='about_images_admin'),
     path('activity/', views.activity, name='activity'),
     path('activities_admin/', views.activities_admin, name='activities_admin'),
     path('event/', views.event, name='event'),
@@ -72,6 +73,9 @@ urlpatterns = [
     path('list_contact_view/', views.list_contact_view, name='list_contact_view'),
     path('actualizar_contact/<id_contact>', views.actualizar_contact, name='actualizar_contact'),
     path('eliminar_contact/<id_contact>', views.eliminar_contact, name='eliminar_contact'),
+    path('list_about_images_admin_view/', views.list_about_images_admin_view, name='list_about_images_admin_view'),
+    path('actualizar_about_images_admin/<id_about_images_admin>', views.actualizar_about_images_admin, name='actualizar_about_images_admin'),
+    path('eliminar_about_images_admin/<id_about_images_admin>', views.eliminar_about_images_admin, name='eliminar_about_images_admin'),
 
 
 

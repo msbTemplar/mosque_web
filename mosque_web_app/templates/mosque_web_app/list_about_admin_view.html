@@ -59,11 +59,12 @@
                         <th scope="col" class="text-center">raised</th>
                         <th scope="col" class="text-center">raised value</th>
                         <th scope="col" class="text-center">description raised</th>
+                        <th scope="col" class="text-center">img url raised about</th>
                         <th scope="col" class="text-center">charity and donation</th>
                         <th scope="col" class="text-center">parent education</th>
                         <th scope="col" class="text-center">hadith and sunnah</th>
                         <th scope="col" class="text-center">mosque development</th>
-                        
+                        <th scope="col" class="text-center">file about</th>
                         
                         
                     
@@ -114,6 +115,13 @@
                           <a class="btn btn-warning" href="#" onclick="VerAboutDescription4('{{ lista_about_admin_view.id }}','{{lista_about_admin_view.description_raised}}','')">Ver description raised
                             {{ lista_about_admin_view.id }}</a>
                         </td>
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">
+                          {% if lista_about_admin_view.img_url_raised_about %}
+                              <img src="{{ lista_about_admin_view.img_url_raised_about.url }}" class="card-img-top" alt="{{ lista_about_admin_view.raised }}">
+                          {% else %}
+                              <img src="/path/to/default/image.jpg" class="card-img-top" alt="Default Image">
+                          {% endif %}
+                      </th>
 
                         <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_about_admin_view.charity_and_donation}}</th>
                         
@@ -122,6 +130,15 @@
                         <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_about_admin_view.hadith_and_sunnah}}</th>
 
                         <th class="text-wrap" style="max-width: 150px;" scope="row">{{lista_about_admin_view.mosque_development}}</th>
+                        <th class="text-wrap" style="max-width: 150px;" scope="row">
+                          {% if lista_about_admin_view.file_about %}
+                              <a href="{{ lista_about_admin_view.file_about.url }}" class="btn btn-success" target="_blank">
+                                  Descargar archivo
+                              </a>
+                          {% else %}
+                              No hay archivo disponible
+                          {% endif %}
+                      </th>
 
                         <!-- <th class="text-wrap" style="max-width: 150px;" scope="row">
                           {% if lista_events_admin_view.file_event %}
