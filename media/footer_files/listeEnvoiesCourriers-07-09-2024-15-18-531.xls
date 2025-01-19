@@ -1,0 +1,81 @@
+<table border="1"><tr><th>Id Envoie Courrier</th><th>DATE ENVOIE COURRIER</th><th>EXPEDITEUR ENVOIE COURRIER</th><th>DESTINATAIRE ENVOIE COURRIER</th><th>ADDRESSE ENVOIE COURRIER</th><th>TYPE DOCUMENT ENVOIE COURRIER</th><th>NOM DOCUMENT ENVOIE COURRIER</th><th>SIZE ENVOIE COURRIER</th><th>Cree le</th></tr><tr><td>9</td>
+	<td>2024-08-10</td>
+	<td>salam</td>
+	<td>salam</td><td>
+	salam</td><td>
+	jpg</td><td>
+	uploads/IMG-20171201-WA0008(1).jpg</td><td>
+	287855</td><td>
+	
+	
+	2024-08-10 18:46:48</td></tr><tr><td>7</td>
+	<td>2024-08-10</td>
+	<td>moha2</td>
+	<td>moha333</td><td>
+	lklkljkk4444999999</td><td>
+	pdf</td><td>
+	uploads/firma_sybdic.pdf</td><td>
+	155363</td><td>
+	
+	
+	2024-08-10 18:45:46</td></tr><tr><td>10</td>
+	<td>2024-08-11</td>
+	<td>456789</td>
+	<td>456789</td><td>
+	456789</td><td>
+	pdf</td><td>
+	uploads/formulaire_cotization_19-2-1.pdf</td><td>
+	245141</td><td>
+	
+	
+	2024-08-11 12:28:26</td></tr><tr><td>11</td>
+	<td>2024-09-07</td>
+	<td></td>
+	<td>terminator 3terminator 3</td><td>
+	terminator 3terminator 3</td><td>
+	</td><td>
+	</td><td>
+	0</td><td>
+	
+	
+	2024-09-07 13:39:20</td></tr><tr><td>12</td>
+	<td>2024-09-07</td>
+	<td>simon templar</td>
+	<td>terminator 3terminator 3</td><td>
+	terminator 3terminator 3</td><td>
+	</td><td>
+	</td><td>
+	0</td><td>
+	
+	
+	2024-09-07 13:41:15</td></tr><tr><td>13</td>
+	<td>2024-09-07</td>
+	<td>filip morrios</td>
+	<td>terminator 4</td><td>
+	terminator 4terminator 4</td><td>
+	</td><td>
+	</td><td>
+	0</td><td>
+	
+	
+	2024-09-07 13:42:21</td></tr><tr><td>14</td>
+	<td>2024-09-07</td>
+	<td>filip morrios</td>
+	<td>terminator 4</td><td>
+	terminator 4terminator 4</td><td>
+	jpg</td><td>
+	DOCTOR COBOS MI VISITA EL 22-09-2017(1)(1)(1).jpg</td><td>
+	576245</td><td>
+	
+	
+	2024-09-07 15:52:55</td></tr><tr><td>15</td>
+	<td>2024-09-07</td>
+	<td>simon templar</td>
+	<td>terminator 3</td><td>
+	terminator 3terminator 3</td><td>
+	jpg</td><td>
+	uploads/DOCTOR COBOS MI VISITA EL 22-09-2017(1)(1)(1).jpg</td><td>
+	576245</td><td>
+	
+	
+	2024-09-07 15:56:33</td></tr></table>

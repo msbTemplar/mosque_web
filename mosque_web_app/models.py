@@ -217,3 +217,172 @@ class Event(models.Model):
     
     def __str__(self):
         return self.title_event
+    
+class Donation(models.Model):
+    title = models.CharField(max_length=200, blank=True, null=True, help_text="Título para la donación (ej: 'Ayuda para el Orfanato')")
+    description = models.TextField(blank=True, null=True, help_text="Descripción breve de la donación.")
+    amount_required = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        help_text="Monto total requerido para esta donación.", blank=True, null=True
+    )
+    amount_collected = models.DecimalField(
+        max_digits=10, 
+        decimal_places=2, 
+        default=0, 
+        help_text="Monto que ya ha sido recaudado.", blank=True, null=True
+    )
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Fecha en la que se creó la donación.")
+    updated_at = models.DateTimeField(auto_now=True, help_text="Última vez que se actualizó esta donación.")
+    is_active = models.BooleanField(default=True, help_text="Define si esta donación está activa y visible.")
+
+    def __str__(self):
+        return f"{self.title} - ${self.amount_collected} / ${self.amount_required}"
+
+    def percentage_collected(self):
+        """Calcula el porcentaje de donaciones recaudadas."""
+        if self.amount_required > 0:
+            return (self.amount_collected / self.amount_required) * 100
+        return 0
+
+class Post(models.Model):
+    DAYS_OF_WEEK = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday'),
+    ]
+    title_post = models.CharField(max_length=200,blank=True, null=True, help_text="Título del post")
+    description_post = models.TextField(blank=True, null=True, help_text="Descripción del post.")
+    link_post = models.URLField(max_length=4500,blank=True, null=True, help_text="Enlace al post completo")
+    explore_link_latest_post_date_footer = models.DateField(help_text="Fecha de publicación",blank=True, null=True)
+    explore_link_latest_post_time_footer = models.TimeField(help_text="Hora de publicación",blank=True, null=True)
+    explore_link_latest_post_day_footer = models.CharField(help_text="Dia de publicación", max_length=9, choices=DAYS_OF_WEEK)  # Día seleccionado del combo
+    image_post = models.ImageField(upload_to='latest_posts/', help_text="Imagen del post", max_length=5500, blank=True, null=True)
+    file_post = models.FileField(upload_to='posts_files/', help_text="File del post" , max_length=5500, blank=True, null=True)  #
+    
+    def __str__(self):
+        return self.title_post
+       
+class Footer(models.Model):
+    DAYS_OF_WEEK = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday'),
+    ]
+    
+    subscribe_footer = models.CharField(help_text="Subscribe_footer", max_length=500,blank=True, null=True)
+    description_subscribe_footer = models.TextField(blank=True, null=True)
+    subscibe_boton_footer = models.CharField(max_length=500, blank=True, null=True)
+    themosque_footer = models.TextField(blank=True, null=True)
+    themosque_description_footer = models.TextField(blank=True, null=True)
+    our_mosque_footer = models.CharField(max_length=500, blank=True, null=True)
+    our_address_footer = models.CharField(max_length=500, blank=True, null=True)
+    our_address_address_footer = models.TextField(blank=True, null=True)
+    our_mobile_footer = models.CharField(max_length=500, blank=True, null=True)
+    our_mobile_mobile_footer = models.CharField(max_length=500, blank=True, null=True)
+    explore_link_footer = models.CharField(max_length=500, blank=True, null=True)
+    #explore_link_home_footer = models.ForeignKey(Home, blank=True, null=True, on_delete=models.CASCADE)
+    explore_link_home_footer = models.CharField(max_length=500, blank=True, null=True)
+    explore_link_about_footer = models.ForeignKey(About, blank=True, null=True, on_delete=models.CASCADE)
+    explore_link_features_footer = models.ForeignKey(Activity, blank=True, null=True, on_delete=models.CASCADE)
+    explore_link_contact_footer = models.ForeignKey(ContactMessage, blank=True, null=True, on_delete=models.CASCADE)
+    explore_link_blog_footer = models.ForeignKey(Blog, blank=True, null=True, on_delete=models.CASCADE)
+    explore_link_events_footer = models.ForeignKey(Event, blank=True, null=True, on_delete=models.CASCADE)
+    explore_link_donations_footer = models.ForeignKey(Donation, blank=True, null=True, on_delete=models.CASCADE)
+    explore_link_sermons_footer = models.ForeignKey(Sermon, blank=True, null=True, on_delete=models.CASCADE)
+    
+    explore_link_posts_footer = models.ForeignKey(Post, blank=True, null=True, on_delete=models.CASCADE)
+    explore_link_latest_post_footer = models.CharField(max_length=500, blank=True, null=True)
+    date_footer = models.DateField(help_text="Fecha de footer", blank=True, null=True)
+    time_footer = models.TimeField(help_text="Hora de footer", blank=True, null=True)
+    day_footer = models.CharField(max_length=9, choices=DAYS_OF_WEEK)  # Día seleccionado del combo
+    description_footer = models.TextField()
+    title_footer = models.CharField(max_length=500,blank=True, null=True, help_text="Título del Footer")
+    link_footer = models.URLField(max_length=4500,blank=True, null=True)
+    img_url_footer = models.ImageField(upload_to='footer_images/', max_length=5500, blank=True, null=True)
+    file_footer = models.FileField(upload_to='footer_files/', max_length=5500, blank=True, null=True)  # Para subir archivos
+    site_name_footer = models.CharField(help_text="Site name", max_length=500,blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Fecha en la que se creó el footer.")
+    updated_at = models.DateTimeField(auto_now=True, help_text="Última vez que se actualizó el footer.")
+    is_active = models.BooleanField(default=True, help_text="Define si este footer está activo y visible.")
+    
+    def __str__(self):
+        return f'{self.title_footer} - {self.site_name_footer}'
+    
+
+
+class ContactInfo(models.Model):
+    DAYS_OF_WEEK = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday'),
+    ]
+    phone_number = models.CharField(max_length=20, verbose_name="Phone Number")
+    email = models.EmailField(verbose_name="Email")
+    facebook_url = models.URLField(blank=True, null=True, verbose_name="Facebook URL")
+    twitter_url = models.URLField(blank=True, null=True, verbose_name="Twitter URL")
+    linkedin_url = models.URLField(blank=True, null=True, verbose_name="LinkedIn URL")
+    instagram_url = models.URLField(blank=True, null=True, verbose_name="Instagram URL")
+    
+    date_contact_info = models.DateField(help_text="Fecha de footer", blank=True, null=True)
+    time_contact_info = models.TimeField(help_text="Hora de footer", blank=True, null=True)
+    day_contact_info = models.CharField(max_length=9, choices=DAYS_OF_WEEK)  # Día seleccionado del combo
+    img_url_contact_info = models.ImageField(upload_to='footer_images/', max_length=5500, blank=True, null=True)
+    file_contact_info = models.FileField(upload_to='footer_files/', max_length=5500, blank=True, null=True)  # Para subir archivos
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Fecha en la que se creó el ContactInfo.")
+    updated_at = models.DateTimeField(auto_now=True, help_text="Última vez que se actualizó el ContactInfo.")
+    is_active = models.BooleanField(default=True, help_text="Define si este ContactInfo está activo y visible.")
+
+    def __str__(self):
+        return f"Contact Info ({self.phone_number}, {self.email})"
+
+
+class Page(models.Model):
+    DAYS_OF_WEEK = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday'),
+    ]
+    title = models.CharField(max_length=100, verbose_name="Page Title", blank=True, null=True)
+    url_name = models.CharField(max_length=100, verbose_name="URL Name", blank=True, null=True)
+    is_dropdown = models.BooleanField(default=False, verbose_name="Is Dropdown", blank=True, null=True)
+    parent = models.ForeignKey(
+        'self', 
+        on_delete=models.CASCADE, 
+        blank=True, 
+        null=True, 
+        related_name="subpages", 
+        verbose_name="Parent Page"
+    )
+    welcome_to_the_mosque = models.CharField(verbose_name="Welcome to the mosque", help_text="Welcome to the mosque", max_length=500,blank=True, null=True)
+    
+    purity_comes_from_faith = models.TextField(verbose_name="Purity comes from faith", help_text="Purity comes from faith", blank=True, null=True)
+    
+    date_page = models.DateField(help_text="Fecha de footer", blank=True, null=True)
+    time_page = models.TimeField(help_text="Hora de footer", blank=True, null=True)
+    day_page = models.CharField(max_length=9, choices=DAYS_OF_WEEK)  # Día seleccionado del combo
+    img_url_page = models.ImageField(upload_to='footer_images/', max_length=5500, blank=True, null=True)
+    file_page = models.FileField(upload_to='footer_files/', max_length=5500, blank=True, null=True)  # Para subir archivos
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Fecha en la que se creó el Home.")
+    updated_at = models.DateTimeField(auto_now=True, help_text="Última vez que se actualizó el Home.")
+    is_active = models.BooleanField(default=True, help_text="Define si este Home está activo y visible.")
+
+    def __str__(self):
+        return self.title
+

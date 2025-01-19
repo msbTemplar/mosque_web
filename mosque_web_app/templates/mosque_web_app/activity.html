@@ -23,21 +23,21 @@
         </div>
         <!-- Hero End -->
 
-
+        
         <!-- Activities Start -->
         <div class="container-fluid activities py-5">
             <div class="container py-5">
                 <div class="mx-auto text-center mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
                     <p class="fs-5 text-uppercase text-primary">Activities</p>
-                    <h1 class="display-3">Here Are Our Activities</h1>
+                    <h1 class="display-3">{{ last_activity.activity_title }}</h1>
                 </div>
                 <div class="row g-4">
                     <div class="col-lg-6 col-xl-4">
                         <div class="activities-item p-4 wow fadeIn" data-wow-delay="0.1s">
                             <i class="fa fa-mosque fa-4x text-dark"></i>
                             <div class="ms-4">
-                                <h4>Mosque Development</h4>
-                                <p class="mb-4">Lorem ipsum dolor sit amet elit. Donec tempus eros vel dolor mattis aliquam.</p>
+                                <h4>{{ last_activity.activity_mosque_development }}</h4>
+                                <p class="mb-4">{{ last_activity.description_activity_mosque_development }}</p>
                                 <a href="" class="btn btn-primary px-3">Read More</a>
                             </div>
                         </div>
@@ -46,8 +46,8 @@
                         <div class="activities-item p-4 wow fadeIn" data-wow-delay="0.3s">
                             <i class="fa fa-donate fa-4x text-dark"></i>
                             <div class="ms-4">
-                                <h4>Charity & Donation</h4>
-                                <p class="mb-4">Lorem ipsum dolor sit amet elit. Donec tempus eros vel dolor mattis aliquam.</p>
+                                <h4>{{ last_activity.activity_charity_donation }}</h4>
+                                <p class="mb-4">{{ last_activity.description_activity_charity_donation }}</p>
                                 <a href="" class="btn btn-primary px-3">Read More</a>
                             </div>
                         </div>
@@ -56,8 +56,8 @@
                         <div class="activities-item p-4 wow fadeIn" data-wow-delay="0.5s">
                             <i class="fa fa-quran fa-4x text-dark"></i>
                             <div class="ms-4">
-                                <h4>Quran Learning</h4>
-                                <p class="mb-4">Lorem ipsum dolor sit amet elit. Donec tempus eros vel dolor mattis aliquam.</p>
+                                <h4>{{ last_activity.activity_quran_learning }}</h4>
+                                <p class="mb-4">{{ last_activity.description_activity_quran_learning }}</p>
                                 <a href="" class="btn btn-primary px-3">Read More</a>
                             </div>
                         </div>
@@ -66,8 +66,8 @@
                         <div class="activities-item p-4 wow fadeIn" data-wow-delay="0.1s">
                             <i class="fa fa-book fa-4x text-dark"></i>
                             <div class="ms-4">
-                                <h4>Hadith & Sunnah</h4>
-                                <p class="mb-4">Lorem ipsum dolor sit amet elit. Donec tempus eros vel dolor mattis aliquam.</p>
+                                <h4>{{ last_activity.activity_hadith_sunnah }}Hadith & Sunnah</h4>
+                                <p class="mb-4">{{ last_activity.description_activity_hadith_sunnah }}</p>
                                 <a href="" class="btn btn-primary px-3">Read More</a>
                             </div>
                         </div>
@@ -76,8 +76,8 @@
                         <div class="activities-item p-4 wow fadeIn" data-wow-delay="0.3s">
                             <i class="fa fa-book-open fa-4x text-dark"></i>
                             <div class="ms-4">
-                                <h4>Parent Education</h4>
-                                <p class="mb-4">Lorem ipsum dolor sit amet elit. Donec tempus eros vel dolor mattis aliquam.</p>
+                                <h4>{{ last_activity.activity_parent_education }}</h4>
+                                <p class="mb-4">{{ last_activity.description_activity_parent_education }}</p>
                                 <a href="" class="btn btn-primary px-3">Read More</a>
                             </div>
                         </div>
@@ -86,8 +86,8 @@
                         <div class="activities-item p-4 wow fadeIn" data-wow-delay="0.5s">
                             <i class="fa fa-hands fa-4x text-dark"></i>
                             <div class="ms-4">
-                                <h4>Help Orphans</h4>
-                                <p class="mb-4">Lorem ipsum dolor sit amet elit. Donec tempus eros vel dolor mattis aliquam.</p>
+                                <h4>{{ last_activity.activity_help_orphans }}</h4>
+                                <p class="mb-4">{{ last_activity.description_activity_help_orphans }}</p>
                                 <a href="" class="btn btn-primary px-3">Read More</a>
                             </div>
                         </div>
@@ -99,11 +99,11 @@
 
 
         <!-- Testiminial Start -->
-        <div class="container-fluid testimonial py-5">
+       <!--  <div class="container-fluid testimonial py-5">
             <div class="container py-5">
                 <div class="text-center mx-auto mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
-                    <p class="fs-5 text-uppercase text-primary">Testimonial</p>
-                    <h1 class="display-3">What People Say About Islam</h1>
+                    <p class="fs-5 text-uppercase text-primary">{{ last_activity.activity_testimonial }}</p>
+                    <h1 class="display-3">{{ last_activity.activity_title_testimonial }}</h1>
                 </div>
                 <div class="owl-carousel testimonial-carousel wow fadeIn" data-wow-delay="0.1s">
                     <div class="testimonial-item">
@@ -204,8 +204,53 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> -->
         <!-- Testiminial End -->
+
+        <!-- Testimonial Start -->
+<div class="container-fluid testimonial py-5">
+    <div class="container py-5">
+        <div class="text-center mx-auto mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+            <p class="fs-5 text-uppercase text-primary">{{ last_activity.activity_testimonial }}</p>
+            <h1 class="display-3">{{ last_activity.activity_title_testimonial }}</h1>
+        </div>
+        <div class="owl-carousel testimonial-carousel wow fadeIn" data-wow-delay="0.1s">
+            {% for testimonial in testimonials %}
+            <div class="testimonial-item">
+                <div class="d-flex mb-3">
+                    <div class="position-relative">
+                        {% if testimonial.testimonial_img_url %}
+                        <img src="{{ testimonial.testimonial_img_url.url }}" class="img-fluid" alt="{{ testimonial.testimonial_full_name }}">
+                        {% else %}
+                        <img src="{% static 'mosque_web_app/img/default-testimonial.jpg' %}" class="img-fluid" alt="Default Image">
+                        {% endif %}
+                        <div class="btn-md-square bg-primary rounded-circle position-absolute" style="top: 25px; left: -25px;">
+                            <i class="fa fa-quote-left text-dark"></i>
+                        </div>
+                    </div>
+                    <div class="ps-3 my-auto">
+                        <h5 class="mb-0">{{ testimonial.testimonial_full_name }}</h5>
+                        <p class="m-0">{{ testimonial.testimonial_position }}</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    <div class="d-flex">
+                        <!-- Estrellas (puedes personalizar esto según tus datos) -->
+                        <i class="fas fa-star text-primary"></i>
+                        <i class="fas fa-star text-primary"></i>
+                        <i class="fas fa-star text-primary"></i>
+                        <i class="fas fa-star text-primary"></i>
+                        <i class="fas fa-star text-primary"></i>
+                    </div>
+                    <p class="fs-5 m-0 pt-3">{{ testimonial.testimonial_description }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Testimonial End -->
+
 
 {% endblock %}
         

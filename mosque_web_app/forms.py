@@ -1,12 +1,446 @@
 # forms.py
 from django import forms
-from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, Newsletter, AboutImages
+from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, Newsletter, AboutImages, Footer, Donation, Post, Page, ContactInfo
 import json
 from django.core.exceptions import ValidationError
 
 from django import forms
 from .models import Testimonial
 import json
+
+
+
+class ContactInfoForm(forms.ModelForm):
+    class Meta:
+        model = ContactInfo
+        fields = [
+            'phone_number',
+            'email',
+            'facebook_url',
+            'twitter_url',
+            'linkedin_url',
+            'instagram_url',
+            'date_contact_info',
+            'time_contact_info',
+            'day_contact_info',
+            'img_url_contact_info',
+            'file_contact_info',
+            'is_active',
+        ]
+        widgets = {
+            'phone_number': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Número de Teléfono',
+                'style': 'height: 55px;',
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Correo Electrónico',
+                'style': 'height: 55px;',
+            }),
+            'facebook_url': forms.URLInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'URL de Facebook',
+                'style': 'height: 55px;',
+            }),
+            'twitter_url': forms.URLInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'URL de Twitter',
+                'style': 'height: 55px;',
+            }),
+            'linkedin_url': forms.URLInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'URL de LinkedIn',
+                'style': 'height: 55px;',
+            }),
+            'instagram_url': forms.URLInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'URL de Instagram',
+                'style': 'height: 55px;',
+            }),
+            'date_contact_info': forms.DateInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Fecha',
+                'type': 'date',
+                'style': 'height: 55px;',
+            }),
+            'time_contact_info': forms.TimeInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Hora',
+                'type': 'time',
+                'style': 'height: 55px;',
+            }),
+            'day_contact_info': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'img_url_contact_info': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'file_contact_info': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'style': 'margin-left: 10px;',
+            }),
+        }
+
+
+class PageForm(forms.ModelForm):
+    class Meta:
+        model = Page
+        fields = [
+            'title',
+            'url_name',
+            'is_dropdown',
+            'parent',
+            'welcome_to_the_mosque',
+            'purity_comes_from_faith',
+            'date_page',
+            'time_page',
+            'day_page',
+            'img_url_page',
+            'file_page',
+            'is_active',
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Título de la Página',
+                'style': 'height: 55px;',
+            }),
+            'url_name': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Nombre de la URL',
+                'style': 'height: 55px;',
+            }),
+            'is_dropdown': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'style': 'margin-left: 10px;',
+            }),
+            'parent': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'welcome_to_the_mosque': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Bienvenida a la Mezquita',
+                'style': 'height: 55px;',
+            }),
+            'purity_comes_from_faith': forms.Textarea(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'La pureza proviene de la fe',
+                'style': 'height: 150px;',
+            }),
+            'date_page': forms.DateInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Fecha',
+                'type': 'date',
+                'style': 'height: 55px;',
+            }),
+            'time_page': forms.TimeInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Hora',
+                'type': 'time',
+                'style': 'height: 55px;',
+            }),
+            'day_page': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'img_url_page': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'file_page': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'style': 'margin-left: 10px;',
+            }),
+        }
+
+
+
+class DonationForm(forms.ModelForm):
+    class Meta:
+        model = Donation
+        fields = [
+            'title',
+            'description',
+            'amount_required',
+            'amount_collected',
+            'is_active',
+        ]
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Título de la Donación',
+                'style': 'height: 55px;',
+            }),
+            'description': forms.Textarea(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Descripción de la Donación',
+                'style': 'height: 150px;',
+            }),
+            'amount_required': forms.NumberInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Monto Total Requerido',
+                'style': 'height: 55px;',
+            }),
+            'amount_collected': forms.NumberInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Monto Recaudado',
+                'style': 'height: 55px;',
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'style': 'margin-left: 10px;',
+            }),
+        }
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = [
+            'title_post',
+            'description_post',
+            'link_post',
+            'explore_link_latest_post_date_footer',
+            'explore_link_latest_post_time_footer',
+            'explore_link_latest_post_day_footer',
+            'image_post',
+            'file_post',
+        ]
+        widgets = {
+            'title_post': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Título del Post',
+                'style': 'height: 55px;',
+            }),
+            'description_post': forms.Textarea(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Descripción del Post',
+                'style': 'height: 150px;',
+            }),
+            'link_post': forms.URLInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Enlace al Post',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_latest_post_date_footer': forms.DateInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Fecha de Publicación',
+                'type': 'date',
+            }),
+            'explore_link_latest_post_time_footer': forms.TimeInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Hora de Publicación',
+                'type': 'time',
+            }),
+            'explore_link_latest_post_day_footer': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'image_post': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'file_post': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+        }
+
+class FooterForm(forms.ModelForm):
+    class Meta:
+        model = Footer
+        fields = [
+            'subscribe_footer',
+            'description_subscribe_footer',
+            'subscibe_boton_footer',
+            'themosque_footer',
+            'themosque_description_footer',
+            'our_mosque_footer',
+            'our_address_footer',
+            'our_address_address_footer',
+            'our_mobile_footer',
+            'our_mobile_mobile_footer',
+            'explore_link_footer',
+            'explore_link_home_footer',  # Relación ForeignKey
+            'explore_link_about_footer',  # Relación ForeignKey
+            'explore_link_features_footer',  # Relación ForeignKey
+            'explore_link_contact_footer',  # Relación ForeignKey
+            'explore_link_blog_footer',  # Relación ForeignKey
+            'explore_link_events_footer',  # Relación ForeignKey
+            'explore_link_donations_footer',  # Relación ForeignKey
+            'explore_link_sermons_footer',  # Relación ForeignKey
+            'explore_link_latest_post_footer',
+            'explore_link_posts_footer',  # Relación ForeignKey
+            'date_footer',
+            'time_footer',
+            'day_footer',
+            'description_footer',
+            'title_footer',
+            'link_footer',
+            'img_url_footer',
+            'file_footer',
+            'site_name_footer',
+            'is_active',
+        ]
+        widgets = {
+            'subscribe_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Subscribe Footer',
+                'style': 'height: 55px;',
+            }),
+            'description_subscribe_footer': forms.Textarea(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Description Subscribe Footer',
+                'style': 'height: 200px;',
+            }),
+            'subscibe_boton_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Subscribe Button Footer',
+                'style': 'height: 55px;',
+            }),
+            'themosque_footer': forms.Textarea(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'The Mosque Footer',
+                'style': 'height: 100px;',
+            }),
+            'themosque_description_footer': forms.Textarea(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'The Mosque Description Footer',
+                'style': 'height: 100px;',
+            }),
+            'our_mosque_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Our Mosque Footer',
+                'style': 'height: 55px;',
+            }),
+            'our_address_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Our Address Footer',
+                'style': 'height: 55px;',
+            }),
+            'our_address_address_footer': forms.Textarea(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Our Address Details Footer',
+                'style': 'height: 100px;',
+            }),
+            'our_mobile_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Our Mobile Footer',
+                'style': 'height: 55px;',
+            }),
+            'our_mobile_mobile_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Our Mobile Details Footer',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Explore Link Footer',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_home_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Explore Link Home Footer',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_about_footer': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_features_footer': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_contact_footer': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_blog_footer': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_events_footer': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_donations_footer': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_sermons_footer': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_posts_footer': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'explore_link_latest_post_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Footer Title',
+                'style': 'height: 55px;',
+            }),
+            'date_footer': forms.DateInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Footer Date',
+                'type': 'date',
+            }),
+            'time_footer': forms.TimeInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Footer Time',
+                'type': 'time',
+            }),
+            'day_footer': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'description_footer': forms.Textarea(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Description Footer',
+                'style': 'height: 200px;',
+            }),
+            'title_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Footer Title',
+                'style': 'height: 55px;',
+            }),
+            'link_footer': forms.URLInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Footer Link',
+                'style': 'height: 55px;',
+            }),
+            'img_url_footer': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'file_footer': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'site_name_footer': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Site Name',
+                'style': 'height: 55px;',
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'style': 'margin-left: 10px;',
+            }),
+        }
+
+
+
 
 class NewsletterForm(forms.ModelForm):
     class Meta:

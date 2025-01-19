@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}List Contact Info Admin{% endblock %}
+{% block meta_description %}Admin page to manage contact information{% endblock %}
+{% block content %}
+
+<!-- Hero Start -->
+<div class="container-fluid hero-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="hero-header-inner animated zoomIn">
+                    <h1 class="display-1 text-dark">List Contact Info Admin</h1>
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                        <li class="breadcrumb-item text-dark" aria-current="page">List Contact Info Admin</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+
+{% if success_message %}
+<center>
+    <h2>{{ success_message }}</h2>
+    <h3>Information registered successfully...</h3>
+    <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
+</center>
+{% else %}
+
+<!-- Contact Info List Start -->
+<div class="container-fluid contact py-5">
+    <div class="container py-5">
+        <div class="text-center mx-auto mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+            <p class="fs-5 text-uppercase text-primary">Contact Info Admin</p>
+            <h1 class="display-3">Manage Contact Info Entries</h1>
+            <p class="mb-0">Below is the list of contact information entries. You can update or delete entries if you have the required permissions.</p>
+        </div>
+        <div class="row g-4 wow fadeIn" data-wow-delay="0.3s">
+            <h2>List of Contact Info Entries</h2>
+            <table class="table table-striped table-hover table-bordered border-primary shadow rounded custom-table">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-center">Phone Number</th>
+                        <th scope="col" class="text-center">Email</th>
+                        <th scope="col" class="text-center">Social Media Links</th>
+                        <th scope="col" class="text-center">Footer Date</th>
+                        <th scope="col" class="text-center">Footer Time</th>
+                        <th scope="col" class="text-center">Footer Day</th>
+                        <th scope="col" class="text-center">Image</th>
+                        <th scope="col" class="text-center">File</th>
+                        {% if user.is_superuser %}
+                        <th scope="col" class="text-center">Update</th>
+                        <th scope="col" class="text-center">Delete</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for contact in la_lista_contact_info_admin_view %}
+                    <tr>
+                        <td class="text-wrap">{{ contact.phone_number }}</td>
+                        <td class="text-wrap">{{ contact.email }}</td>
+                        <td>
+                            {% if contact.facebook_url %}<a href="{{ contact.facebook_url }}" target="_blank">Facebook</a>{% endif %}
+                            {% if contact.twitter_url %}<br><a href="{{ contact.twitter_url }}" target="_blank">Twitter</a>{% endif %}
+                            {% if contact.linkedin_url %}<br><a href="{{ contact.linkedin_url }}" target="_blank">LinkedIn</a>{% endif %}
+                            {% if contact.instagram_url %}<br><a href="{{ contact.instagram_url }}" target="_blank">Instagram</a>{% endif %}
+                        </td>
+                        <td>{{ contact.date_contact_info }}</td>
+                        <td>{{ contact.time_contact_info }}</td>
+                        <td>{{ contact.day_contact_info }}</td>
+                        <td>
+                            {% if contact.img_url_contact_info %}
+                            <img src="{{ contact.img_url_contact_info.url }}" class="img-fluid" alt="Contact Image" style="max-width: 150px;">
+                            {% else %}
+                            <img src="{% static 'images/default_image.jpg' %}" class="img-fluid" alt="Default Image" style="max-width: 150px;">
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if contact.file_contact_info %}
+                            <a href="{{ contact.file_contact_info.url }}" class="btn btn-success" target="_blank">Download File</a>
+                            {% else %}
+                            No file uploaded
+                            {% endif %}
+                        </td>
+                        {% if user.is_superuser %}
+                        <td class="text-center">
+                            <a class="btn btn-info" href="{% url 'actualizar_contact_info_admin' contact.id %}">Update</a>
+                        </td>
+                        <td class="text-center">
+                            <a class="btn btn-danger" href="#" onclick="confirmDeleteContactInfo('{{ contact.id }}')">Delete</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Contact Info List End -->
+
+{% endif %}
+
+
+
+{% endblock %}

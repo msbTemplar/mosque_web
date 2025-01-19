@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Footer Admin List{% endblock %}
+{% block meta_description %} This is the web site of the greatest Mosque {% endblock %}
+{% block content %}
+
+<!-- Hero Start -->
+<div class="container-fluid hero-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="hero-header-inner animated zoomIn">
+                    <h1 class="display-1 text-dark">List Footer Admin</h1>
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                        <li class="breadcrumb-item text-dark" aria-current="page">List Footer Admin</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+
+{% if events_404_error_title %}
+<center>
+    <h2>Email sent correctly {{ events_404_error_title }}</h2>
+    <h3>Information registered successfully ... </h3>
+    <a href="{% url 'home' %}" class="btn btn-primary">Home</a>
+</center>
+{% else %}
+
+<!-- Footer Admin Start -->
+<div class="container-fluid contact py-5">
+    <div class="container py-5">
+        <div class="text-center mx-auto mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+            <p class="fs-5 text-uppercase text-primary">List Footer Admin</p>
+            <h1 class="display-3">List Footer Admin For Any Queries</h1>
+        </div>
+        <div class="row g-4 wow fadeIn" data-wow-delay="0.3s">
+
+            <h2>List of Footer Admins</h2>
+            <table class="table table-striped table-hover table-bordered border-primary shadow rounded custom-table">
+                <thead>
+                    <tr>
+                        <th scope="col" class="text-center">Subscribe Footer</th>
+                        <th scope="col" class="text-center">Description Subscribe Footer</th>
+                        <th scope="col" class="text-center">Subscribe Button Footer</th>
+                        <th scope="col" class="text-center">The Mosque Footer</th>
+                        <th scope="col" class="text-center">The Mosque Description Footer</th>
+                        <th scope="col" class="text-center">Our Mosque Footer</th>
+                        <th scope="col" class="text-center">Our Address Footer</th>
+                        <th scope="col" class="text-center">Our Address Description Footer</th>
+                        <th scope="col" class="text-center">Our Mobile Footer</th>
+                        <th scope="col" class="text-center">Our Mobile Mobile Footer</th>
+                        <th scope="col" class="text-center">Explore Link Footer</th>
+                        <th scope="col" class="text-center">Explore Link Home Footer</th>
+                        <th scope="col" class="text-center">Explore Link About Footer</th>
+                        <th scope="col" class="text-center">Explore Link Features Footer</th>
+                        <th scope="col" class="text-center">Explore Link Blog Footer</th>
+                        <th scope="col" class="text-center">Explore Link Donations Footer</th>
+                        <th scope="col" class="text-center">Explore Link Sermons Footer</th>
+                        <th scope="col" class="text-center">Date Footer</th>
+                        <th scope="col" class="text-center">Time Footer</th>
+                        <th scope="col" class="text-center">Day Footer</th>
+                        <th scope="col" class="text-center">Image Footer</th>
+                        <th scope="col" class="text-center">File Footer</th>
+                        <th scope="col" class="text-center">Site Name Footer</th>
+
+                        {% if user.is_superuser %}
+                        <th scope="col" class="text-center">Update</th>
+                        <th scope="col" class="text-center">Delete</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for footer in la_lista_footer_admin_view %}
+                    <tr>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.subscribe_footer }}</td>
+                        <!-- <td class="text-wrap" style="max-width: 150px;">{{ footer.description_subscribe_footer }}</td> -->
+                        <td>
+                          <a class="btn btn-warning" href="#" onclick="Ver_description_subscribe_footer('{{ footer.id }}','{{footer.description_subscribe_footer}}','')">Description Subscribe Footer
+                            {{ footer.id }}</a>
+                        </td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.subscibe_boton_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.themosque_footer }}</td>
+                        <!-- <td class="text-wrap" style="max-width: 150px;">{{ footer.themosque_description_footer }}</td> -->
+                        <td>
+                          <a class="btn btn-warning" href="#" onclick="Ver_themosque_description_footer('{{ footer.id }}','{{footer.themosque_description_footer}}','')">The Mosque Description Footer
+                            {{ footer.id }}</a>
+                        </td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.our_mosque_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.our_address_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.our_address_address_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.our_mobile_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.our_mobile_mobile_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.explore_link_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.explore_link_home_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.explore_link_about_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.explore_link_features_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.explore_link_blog_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.explore_link_donations_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.explore_link_sermons_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.date_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.time_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.day_footer }}</td>
+                        <td class="text-wrap" style="max-width: 150px;">
+                            {% if footer.img_url_footer %}
+                            <img src="{{ footer.img_url_footer.url }}" class="card-img-top" alt="Footer Image">
+                            {% else %}
+                            No Image Available
+                            {% endif %}
+                        </td>
+                        <td class="text-wrap" style="max-width: 150px;">
+                            {% if footer.file_footer %}
+                            <a href="{{ footer.file_footer.url }}" class="btn btn-success" target="_blank">Download File</a>
+                            {% else %}
+                            No File Available
+                            {% endif %}
+                        </td>
+                        <td class="text-wrap" style="max-width: 150px;">{{ footer.site_name_footer }}</td>
+
+                        {% if user.is_superuser %}
+                        <td class="text-center">
+                          <a class="btn btn-info" href="{% url 'actualizar_footer_admin' footer.id %}">Actualiser {{footer.id}}</a>
+                        </td>
+                        <td class="text-center">
+                          <a class="btn btn-danger" href="#" onclick="confirmDeleteFooter('{{ footer.id }}')">Eliminer {{footer.id}}</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- Footer Admin End -->
+
+{% endif %}
+{% endblock %}
