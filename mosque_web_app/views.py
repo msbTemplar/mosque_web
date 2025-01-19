@@ -14,6 +14,72 @@ from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Bl
 
 # Create your views here.
 
+from django.contrib.auth.views import LoginView
+
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        # Obtener la última página activa
+        page = (
+            Page.objects.filter(is_active=True)
+            .order_by('-updated_at', '-created_at')
+            .first()
+        )
+
+        # Obtener la última información de contacto activa
+        contact_info = (
+            ContactInfo.objects.filter(is_active=True)
+            .order_by('-updated_at', '-created_at')
+            .first()
+        )
+
+        # Obtener el último footer (si existe)
+        footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
+
+        # Obtener todos los posts
+        posts = Post.objects.all() if Post.objects.exists() else None
+
+        # Obtener todas las donaciones
+        donations = Donation.objects.all() if Donation.objects.exists() else None
+
+        # Variables relacionadas con el footer
+        footer_subscribe_footer = getattr(footer, 'subscribe_footer', 'No footer available')
+        footer_description_subscribe_footer = getattr(footer, 'description_subscribe_footer', 'No description available.')
+        footer_subscibe_boton_footer = getattr(footer, 'subscibe_boton_footer', 'Subscribe')
+        footer_themosque_footer = getattr(footer, 'themosque_footer', 'No footer description.')
+        footer_link_footer = getattr(footer, 'link_footer', '#')
+        footer_our_mosque_footer = getattr(footer, 'our_mosque_footer', 'No mosque info.')
+        footer_our_address_footer = getattr(footer, 'our_address_footer', 'No address.')
+        footer_our_mobile_footer = getattr(footer, 'our_mobile_footer', 'No mobile info.')
+        footer_our_mobile_mobile_footer = getattr(footer, 'our_mobile_mobile_footer', 'No phone info.')
+        footer_site_name_footer = getattr(footer, 'site_name_footer', 'Website')
+
+        # Actualizar el contexto
+        context.update({
+            'donations': donations,
+            'posts': posts,
+            'footer': footer,
+            'footer_subscribe_footer': footer_subscribe_footer,
+            'footer_description_subscribe_footer': footer_description_subscribe_footer,
+            'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
+            'footer_themosque_footer': footer_themosque_footer,
+            'footer_link_footer': footer_link_footer,
+            'footer_our_mosque_footer': footer_our_mosque_footer,
+            'footer_our_address_footer': footer_our_address_footer,
+            'footer_our_mobile_footer': footer_our_mobile_footer,
+            'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
+            'footer_site_name_footer': footer_site_name_footer,
+            'contact_info': contact_info,
+            'page': page,
+        })
+
+        return context
+
+
+
 def newsletter(request):
     page = (
         Page.objects.filter(is_active=True)
@@ -223,20 +289,20 @@ def view_404_admin(request):
             )
             
             return render(request, 'mosque_web_app/404_admin.html', {'events_404_error_title': events_404_error_title,'donations': donations,
-        'posts': posts,
-        'footer': footer,
-        'footer_subscribe_footer': footer_subscribe_footer,
-        'footer_description_subscribe_footer': footer_description_subscribe_footer,
-        'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
-        'footer_themosque_footer': footer_themosque_footer,
-        'footer_link_footer': footer_link_footer,
-        'footer_our_mosque_footer': footer_our_mosque_footer,
-        'footer_our_address_footer': footer_our_address_footer,
-        'footer_our_mobile_footer': footer_our_mobile_footer,
-        'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
-        'footer_site_name_footer': footer_site_name_footer,
-        'contact_info': contact_info,
-        'page': page,})
+            'posts': posts,
+            'footer': footer,
+            'footer_subscribe_footer': footer_subscribe_footer,
+            'footer_description_subscribe_footer': footer_description_subscribe_footer,
+            'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
+            'footer_themosque_footer': footer_themosque_footer,
+            'footer_link_footer': footer_link_footer,
+            'footer_our_mosque_footer': footer_our_mosque_footer,
+            'footer_our_address_footer': footer_our_address_footer,
+            'footer_our_mobile_footer': footer_our_mobile_footer,
+            'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
+            'footer_site_name_footer': footer_site_name_footer,
+            'contact_info': contact_info,
+            'page': page,})
     else:
         form = Error404Form()
     
