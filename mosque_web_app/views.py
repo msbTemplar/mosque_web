@@ -5,16 +5,111 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.http import JsonResponse
 import locale
-from .forms import ContactMessageForm,AboutForm,ActivityForm, EventForm,Error404Form,SermonForm,BlogForm, TeamMemberForm, TestimonialForm, NewsletterForm, AboutImagesForm, FooterForm, DonationForm, PostForm, ContactInfoForm, PageForm
+from .forms import ContactMessageForm,AboutForm,ActivityForm, EventForm,Error404Form,SermonForm,BlogForm, TeamMemberForm, TestimonialForm, NewsletterForm, AboutImagesForm, FooterForm, DonationForm, PostForm, ContactInfoForm, PageForm,CustomUserCreationForm
 
 from django.core.exceptions import ValidationError
 import json
 from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, AboutImages, Footer, Donation, Post, ContactInfo, Page
-
+from django.contrib.auth.views import LoginView
 
 # Create your views here.
 
-from django.contrib.auth.views import LoginView
+
+
+
+def register1(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "¡Tu cuenta ha sido creada con éxito!")
+            return redirect('login')  # Redirige a la página de login después de registrarse
+    else:
+        form = CustomUserCreationForm()
+    
+    return render(request, 'cars_reviews_app/register.html', {'form': form})
+
+
+def register(request):
+    page = (
+        Page.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if Page.objects.exists() else None
+    )
+
+    contact_info = (
+        ContactInfo.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if ContactInfo.objects.exists() else None
+    )
+
+    # Obtener el último footer (si existe)
+    footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
+
+    # Obtener todos los posts (si existen)
+    posts = Post.objects.all() if Post.objects.exists() else None
+
+    # Obtener todas las donaciones (si existen)
+    donations = Donation.objects.all() if Donation.objects.exists() else None
+
+    # Variables para pasar al template
+    footer_subscribe_footer = footer.subscribe_footer if footer else 'No footer available'
+    footer_description_subscribe_footer = footer.description_subscribe_footer if footer else 'No description available.'
+    footer_subscibe_boton_footer = footer.subscibe_boton_footer if footer else 'Subscribe'
+    footer_themosque_footer = footer.themosque_footer if footer else 'No footer description.'
+    footer_link_footer = footer.link_footer if footer else '#'
+    footer_our_mosque_footer = footer.our_mosque_footer if footer else 'No mosque info.'
+    footer_our_address_footer = footer.our_address_footer if footer else 'No address.'
+    footer_our_mobile_footer = footer.our_mobile_footer if footer else 'No mobile info.'
+    footer_our_mobile_mobile_footer = footer.our_mobile_mobile_footer if footer else 'No phone info.'
+    footer_site_name_footer = footer.site_name_footer if footer else 'Website'
+
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            messages.success(request, "¡Tu cuenta ha sido creada con éxito!")
+
+            # Enviar correo electrónico de bienvenida
+            email_content = f"""
+            ¡Bienvenido {user.username}!
+
+            Tu cuenta ha sido creada con éxito en nuestro sitio web.
+
+            Gracias por unirte a nuestra comunidad.
+            """
+
+            send_mail(
+                'Bienvenido a nuestro sitio web',  # Asunto
+                email_content,  # Cuerpo del correo
+                'noreply@tusitio.com',  # Correo electrónico del remitente
+                [user.email,'msb.caixa@gmail.com','msb.tesla@gmail.com', 'msb.coin@gmail.com', 'msb.duck@gmail.com', 'msebti2@gmail.com', 'papioles@gmail.com', 'msb.motive@gmail.com', 'msb.acer@gmail.com'],  # Correo electrónico del usuario registrado
+            )
+
+            return redirect('login')  # Redirige a la página de login después de registrarse
+    else:
+        form = CustomUserCreationForm()
+
+    return render(request, 'register.html', {
+        'form': form,
+        'donations': donations,
+        'posts': posts,
+        'footer': footer,
+        'footer_subscribe_footer': footer_subscribe_footer,
+        'footer_description_subscribe_footer': footer_description_subscribe_footer,
+        'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
+        'footer_themosque_footer': footer_themosque_footer,
+        'footer_link_footer': footer_link_footer,
+        'footer_our_mosque_footer': footer_our_mosque_footer,
+        'footer_our_address_footer': footer_our_address_footer,
+        'footer_our_mobile_footer': footer_our_mobile_footer,
+        'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
+        'footer_site_name_footer': footer_site_name_footer,
+        'contact_info': contact_info,
+        'page': page,
+    })
+
+
 
 class CustomLoginView(LoginView):
     template_name = 'login.html'

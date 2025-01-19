@@ -100,6 +100,7 @@
                             <div class="h-100 d-inline-flex align-items-center">
                                 <span class="far fa-envelope me-2 text-dark"></span>
                                 <a href="#" class="text-secondary"><span>{{ contact_info.email }}</span></a>
+                                <a href="" class="nav-item nav-link"><b>User Connected:</b> {{ user.username}}</a>
                             </div>
                         </div>
                         <div class="col-lg-5 text-end">
@@ -120,6 +121,7 @@
                                     <!-- <a class="text-body ps-4" href="{% url 'login' %}"><i class="fa fa-lock text-dark me-1"></i> Signup/login</a> -->
                                     <a href="{% url 'login' %}" class="text-body ps-4"><i class="fa fa-lock text-dark me-1"></i> Signup/login</a>
                                 {% endif %}
+                                
                             </div>
                         </div>
                     </div>
@@ -149,8 +151,10 @@
                                 </div>
                             </div>
                             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
+                            <a href="{% url 'register' %}" class="nav-item nav-link"><i class="fa fa-lock text-dark me-1"></i> Register</a>
                             {% if user.is_authenticated %}
                             <a href="{% url 'mosque_web_admin' %}" class="nav-item nav-link">Mosque Web Admin ALL</a>
+                            
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">mosque web admin</a>
                                 <div class="dropdown-menu m-0 rounded-0">
@@ -169,6 +173,7 @@
                                     <a href="{% url 'page_admin' %}" class="dropdown-item">Page Admin</a>
                                     <a href="{% url 'view_404_admin' %}" class="dropdown-item">404 Page Admin</a>
                                 </div>
+                                
                             </div>
                             {% else %}
                             {% endif %}

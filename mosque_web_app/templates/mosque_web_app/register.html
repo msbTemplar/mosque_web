@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Register Account{% endblock %}
+{% block meta_description %}Create a new account on our website{% endblock %}
+{% block content %}
+
+<!-- Hero Start -->
+<div class="container-fluid hero-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-7">
+                <div class="hero-header-inner animated zoomIn">
+                    <h1 class="display-1 text-dark">Register</h1>
+                    <ol class="breadcrumb mb-0">
+                        <li class="breadcrumb-item"><a href="#">Home</a></li>
+                        <li class="breadcrumb-item"><a href="#">Account</a></li>
+                        <li class="breadcrumb-item text-dark" aria-current="page">Register</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Hero End -->
+
+<!-- Error Messages -->
+{% if form.errors %}
+    <div class="alert alert-danger">
+        <strong>There was an error with your form submission. Please fix the issues below:</strong>
+        <ul>
+            {% for field in form %}
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+
+<!-- Register Form Start -->
+<div class="container-fluid contact py-5">
+    <div class="container py-5">
+        <div class="text-center mx-auto mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+            <p class="fs-5 text-uppercase text-primary">Register</p>
+            <h1 class="display-3">Create Your Account</h1>
+            <p class="mb-0">Please fill in the form below to create your account. Once completed, you'll receive a confirmation email.</p>
+        </div>
+        
+        <div class="row justify-content-center g-4 wow fadeIn" data-wow-delay="0.3s">
+            <div class="col-lg-8 col-md-10">
+                <form method="POST" enctype="multipart/form-data" class="p-4 border rounded shadow-sm bg-white">
+                    {% csrf_token %}
+                    
+                    <!-- Loop through form fields with custom styles -->
+                    {% for field in form %}
+                        <div class="mb-3">
+                            <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}
+                                <small class="form-text text-muted">{{ field.help_text }}</small>
+                            {% endif %}
+                            {% if field.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in field.errors %}
+                                        <p>{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    
+                    <!-- Submit Button -->
+                    <div class="col-12">
+                        <button class="btn btn-primary w-100 py-3" type="submit">Register</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Register Form End -->
+
+<script>
+    // JavaScript for real-time validation
+    document.addEventListener("DOMContentLoaded", function() {
+        const password1 = document.getElementById("id_password1");
+        const password2 = document.getElementById("id_password2");
+        const username = document.getElementById("id_username");
+        const email = document.getElementById("id_email");
+
+        const validatePassword = () => {
+            // Validate password1 and password2
+            if (password1.value === password2.value && password1.value.length >= 8) {
+                password1.classList.add("is-valid");
+                password1.classList.remove("is-invalid");
+                password2.classList.add("is-valid");
+                password2.classList.remove("is-invalid");
+            } else {
+                password1.classList.add("is-invalid");
+                password1.classList.remove("is-valid");
+                password2.classList.add("is-invalid");
+                password2.classList.remove("is-valid");
+            }
+        };
+
+        const validateEmail = () => {
+            // Simple email validation
+            const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+            if (emailPattern.test(email.value)) {
+                email.classList.add("is-valid");
+                email.classList.remove("is-invalid");
+            } else {
+                email.classList.add("is-invalid");
+                email.classList.remove("is-valid");
+            }
+        };
+
+        const validateUsername = () => {
+            // Validate username (must be at least 4 characters)
+            if (username.value.length >= 4) {
+                username.classList.add("is-valid");
+                username.classList.remove("is-invalid");
+            } else {
+                username.classList.add("is-invalid");
+                username.classList.remove("is-valid");
+            }
+        };
+
+        password1.addEventListener("input", validatePassword);
+        password2.addEventListener("input", validatePassword);
+        email.addEventListener("input", validateEmail);
+        username.addEventListener("input", validateUsername);
+    });
+</script>
+
+{% endblock %}

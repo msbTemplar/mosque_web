@@ -193,6 +193,8 @@ EMAIL_HOST_PASSWORD="sfki wpcn sxib uojk"
 
 
 #LOGIN_REDIRECT_URL = 'dentist_form'
+LOGIN_URL = 'login'
+
 LOGIN_REDIRECT_URL = 'mosque_web_admin'
 
 LOGOUT_REDIRECT_URL = '/'  # Asegúrate de que 'home' esté en tus urls

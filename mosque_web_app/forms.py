@@ -8,6 +8,72 @@ from django import forms
 from .models import Testimonial
 import json
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+""" class CustomUserCreationForm1(UserCreationForm):
+    email = forms.EmailField(required=True, help_text="Requerido. Introduce una dirección de correo válida.")
+    
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Ya existe un usuario con este correo electrónico.")
+        return email """
+    
+
+class CustomUserCreationForm(UserCreationForm):
+    email = forms.EmailField(
+        required=True, 
+        help_text="Requerido. Introduce una dirección de correo válida.",
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control border-1 bg-light px-4',
+            'placeholder': 'Correo Electrónico',
+            'style': 'height: 55px;'
+        })
+    )
+    username = forms.CharField(
+        required=True,
+        help_text="El nombre de usuario debe tener entre 4 y 150 caracteres. No use caracteres especiales.",
+        widget=forms.TextInput(attrs={
+            'class': 'form-control border-1 bg-light px-4',
+            'placeholder': 'Nombre de Usuario',
+            'style': 'height: 55px;'
+        })
+    )
+    password1 = forms.CharField(
+        required=True,
+        help_text="La contraseña debe tener al menos 8 caracteres y contener al menos un número, una mayúscula y un carácter especial.",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control border-1 bg-light px-4',
+            'placeholder': 'Contraseña',
+            'style': 'height: 55px;'
+        })
+    )
+    password2 = forms.CharField(
+        required=True,
+        help_text="Introduzca nuevamente la contraseña para confirmarla.",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control border-1 bg-light px-4',
+            'placeholder': 'Confirmar Contraseña',
+            'style': 'height: 55px;'
+        })
+    )
+
+    class Meta:
+        model = User
+        fields = ['username', 'email', 'password1', 'password2']
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Ya existe un usuario con este correo electrónico.")
+        return email
+
+
 
 
 class ContactInfoForm(forms.ModelForm):
