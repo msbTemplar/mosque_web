@@ -5,13 +5,13 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.http import JsonResponse
 import locale
-from .forms import ContactMessageForm,AboutForm,ActivityForm, EventForm,Error404Form,SermonForm,BlogForm, TeamMemberForm, TestimonialForm, NewsletterForm, AboutImagesForm, FooterForm, DonationForm, PostForm, ContactInfoForm, PageForm,CustomUserCreationForm
+from .forms import ContactMessageForm,AboutForm,ActivityForm, EventForm,Error404Form,SermonForm,BlogForm, TeamMemberForm, TestimonialForm, NewsletterForm, AboutImagesForm, FooterForm, DonationForm, PostForm, ContactInfoForm, PageForm,CustomUserCreationForm, BestVideosForm
 
 from django.core.exceptions import ValidationError
 import json
-from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, AboutImages, Footer, Donation, Post, ContactInfo, Page
+from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, AboutImages, Footer, Donation, Post, ContactInfo, Page, BestVideos
 from django.contrib.auth.views import LoginView
-
+from django.views.decorators.cache import cache_page
 # Create your views here.
 
 
@@ -330,7 +330,7 @@ def view_404_admin(request):
 
     # Obtener todos los posts (si existen)
     posts = Post.objects.all() if Post.objects.exists() else None
-
+    
     # Obtener todas las donaciones (si existen)
     donations = Donation.objects.all() if Donation.objects.exists() else None
     
@@ -4227,6 +4227,300 @@ def eliminar_page_admin(request, id_page_admin):
     page_admin.delete()
     messages.success(request, "El page admin ha sido eliminado con éxito.")
     return redirect('list_page_admin_view')  # Reemplaza 'nombre_de_tu_vista' con el nombre de tu vista principal
+
+@cache_page(0)  # Desactiva la caché
+def best_videos(request):
+    page = (
+        Page.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if Page.objects.exists() else None
+    )
+    
+    contact_info = (
+        ContactInfo.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if ContactInfo.objects.exists() else None
+    )
+    
+    # Obtener el último footer (si existe)
+    footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
+
+    # Obtener todos los posts (si existen)
+    posts = Post.objects.all() if Post.objects.exists() else None
+
+    # Obtener todas las donaciones (si existen)
+    donations = Donation.objects.all() if Donation.objects.exists() else None
+    
+    #bestVideos  = BestVideos.objects.all() if BestVideos.objects.exists() else None
+    bestVideos = BestVideos.objects.filter(is_active=True)
+    
+    
+    # Variables para pasar al template
+    footer_subscribe_footer = footer.subscribe_footer if footer else 'No footer available'
+    footer_description_subscribe_footer = footer.description_subscribe_footer if footer else 'No description available.'
+    footer_subscibe_boton_footer = footer.subscibe_boton_footer if footer else 'Subscribe'
+    footer_themosque_footer = footer.themosque_footer if footer else 'No footer description.'
+    footer_link_footer = footer.link_footer if footer else '#'
+    footer_our_mosque_footer = footer.our_mosque_footer if footer else 'No mosque info.'
+    footer_our_address_footer = footer.our_address_footer if footer else 'No address.'
+    footer_our_mobile_footer = footer.our_mobile_footer if footer else 'No mobile info.'
+    footer_our_mobile_mobile_footer = footer.our_mobile_mobile_footer if footer else 'No phone info.'
+    footer_site_name_footer = footer.site_name_footer if footer else 'Website'
+    
+    context = {'form': '','donations': donations,
+        'posts': posts,
+        'footer': footer,
+        'footer_subscribe_footer': footer_subscribe_footer,
+        'footer_description_subscribe_footer': footer_description_subscribe_footer,
+        'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
+        'footer_themosque_footer': footer_themosque_footer,
+        'footer_link_footer': footer_link_footer,
+        'footer_our_mosque_footer': footer_our_mosque_footer,
+        'footer_our_address_footer': footer_our_address_footer,
+        'footer_our_mobile_footer': footer_our_mobile_footer,
+        'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
+        'footer_site_name_footer': footer_site_name_footer,
+        'contact_info': contact_info,
+        'page': page,
+        'bestVideos': bestVideos,}
+    return render(request, 'mosque_web_app/best_videos.html',context )
+
+
+
+
+def best_videos_admin(request):
+    # Obtener la página principal activa (si existe)
+    page = (
+        Page.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if Page.objects.exists() else None
+    )
+    
+    # Obtener la información de contacto activa (si existe)
+    contact_info = (
+        ContactInfo.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if ContactInfo.objects.exists() else None
+    )
+    
+    # Obtener el último footer (si existe)
+    footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
+
+    # Obtener todos los videos destacados (si existen)
+    best_videos = BestVideos.objects.filter(is_active=True) if BestVideos.objects.exists() else None
+    
+    # Obtener todos los posts (si existen)
+    posts = Post.objects.all() if Post.objects.exists() else None
+    
+    # Obtener todas las donaciones (si existen)
+    donations = Donation.objects.all() if Donation.objects.exists() else None
+    
+    # Variables para pasar al template
+    footer_subscribe_footer = footer.subscribe_footer if footer else 'No footer available'
+    footer_description_subscribe_footer = footer.description_subscribe_footer if footer else 'No description available.'
+    footer_subscibe_boton_footer = footer.subscibe_boton_footer if footer else 'Subscribe'
+    footer_themosque_footer = footer.themosque_footer if footer else 'No footer description.'
+    footer_link_footer = footer.link_footer if footer else '#'
+    footer_our_mosque_footer = footer.our_mosque_footer if footer else 'No mosque info.'
+    footer_our_address_footer = footer.our_address_footer if footer else 'No address.'
+    footer_our_mobile_footer = footer.our_mobile_footer if footer else 'No mobile info.'
+    footer_our_mobile_mobile_footer = footer.our_mobile_mobile_footer if footer else 'No phone info.'
+    footer_site_name_footer = footer.site_name_footer if footer else 'Website'
+    
+    if request.method == 'POST':
+        form = BestVideosForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Guardar el video en la base de datos
+            form.save()
+            
+            # Obtener los datos del formulario
+            video_ref = form.cleaned_data['best_video_ref']
+            video_name = form.cleaned_data['best_video_name']
+            video_description = form.cleaned_data['best_video_description']
+            best_video_url = form.cleaned_data['best_video_url']
+            best_video_img_url = form.cleaned_data['best_video_img_url']
+            best_video_file = form.cleaned_data['best_video_file']
+            
+            # Preparar el contenido para el correo electrónico
+            email_content = f"""
+            You have received a new Best Video submission:
+            
+            Video Reference: {video_ref}
+            Video Name: {video_name}
+            Description: {video_description}
+            best_video_url: {best_video_url}
+            best_video_img_url: {best_video_img_url}
+            best_video_file: {best_video_file}
+            """
+            
+            # Enviar el correo electrónico
+            send_mail(
+                f'New Best Video: {video_name}',  # Asunto
+                email_content,  # Cuerpo del correo con todos los detalles
+                'msb.caixa@gmail.com',  # Correo electrónico del remitente
+                ['msb.caixa@gmail.com','msb.tesla@gmail.com', 'msb.coin@gmail.com', 'msb.duck@gmail.com', 'msebti2@gmail.com', 'papioles@gmail.com', 'msb.motive@gmail.com', 'msb.acer@gmail.com'],  # Correos de destino
+            )
+            
+            return render(request, 'mosque_web_app/best_videos_admin.html', {
+                'video_ref': video_ref,
+                'video_name': video_name,
+                'video_description': video_description,
+                'donations': donations,
+                'posts': posts,
+                'footer': footer,
+                'footer_subscribe_footer': footer_subscribe_footer,
+                'footer_description_subscribe_footer': footer_description_subscribe_footer,
+                'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
+                'footer_themosque_footer': footer_themosque_footer,
+                'footer_link_footer': footer_link_footer,
+                'footer_our_mosque_footer': footer_our_mosque_footer,
+                'footer_our_address_footer': footer_our_address_footer,
+                'footer_our_mobile_footer': footer_our_mobile_footer,
+                'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
+                'footer_site_name_footer': footer_site_name_footer,
+                'contact_info': contact_info,
+                'page': page,
+            })
+    else:
+        form = BestVideosForm()
+
+    return render(request, 'mosque_web_app/best_videos_admin.html', {
+        'form': form,
+        'best_videos': best_videos,
+        'donations': donations,
+        'posts': posts,
+        'footer': footer,
+        'footer_subscribe_footer': footer_subscribe_footer,
+        'footer_description_subscribe_footer': footer_description_subscribe_footer,
+        'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
+        'footer_themosque_footer': footer_themosque_footer,
+        'footer_link_footer': footer_link_footer,
+        'footer_our_mosque_footer': footer_our_mosque_footer,
+        'footer_our_address_footer': footer_our_address_footer,
+        'footer_our_mobile_footer': footer_our_mobile_footer,
+        'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
+        'footer_site_name_footer': footer_site_name_footer,
+        'contact_info': contact_info,
+        'page': page,
+    })
+
+
+def list_best_videos_admin_view(request):
+    page = (
+        Page.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if Page.objects.exists() else None
+    )
+    
+    contact_info = (
+        ContactInfo.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if ContactInfo.objects.exists() else None
+    )
+    
+    # Obtener el último footer (si existe)
+    footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
+
+    # Obtener todos los posts (si existen)
+    posts = Post.objects.all() if Post.objects.exists() else None
+
+    # Obtener todas las donaciones (si existen)
+    donations = Donation.objects.all() if Donation.objects.exists() else None
+    
+    # Variables para pasar al template
+    footer_subscribe_footer = footer.subscribe_footer if footer else 'No footer available'
+    footer_description_subscribe_footer = footer.description_subscribe_footer if footer else 'No description available.'
+    footer_subscibe_boton_footer = footer.subscibe_boton_footer if footer else 'Subscribe'
+    footer_themosque_footer = footer.themosque_footer if footer else 'No footer description.'
+    footer_link_footer = footer.link_footer if footer else '#'
+    footer_our_mosque_footer = footer.our_mosque_footer if footer else 'No mosque info.'
+    footer_our_address_footer = footer.our_address_footer if footer else 'No address.'
+    footer_our_mobile_footer = footer.our_mobile_footer if footer else 'No mobile info.'
+    footer_our_mobile_mobile_footer = footer.our_mobile_mobile_footer if footer else 'No phone info.'
+    footer_site_name_footer = footer.site_name_footer if footer else 'Website'
+    
+    la_lista_best_videos_admin_view = BestVideos.objects.all()  # Recupera todos los servicios
+    return render(request, 'mosque_web_app/list_best_videos_admin_view.html', {'la_lista_best_videos_admin_view': la_lista_best_videos_admin_view,'donations': donations,
+        'posts': posts,
+        'footer': footer,
+        'footer_subscribe_footer': footer_subscribe_footer,
+        'footer_description_subscribe_footer': footer_description_subscribe_footer,
+        'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
+        'footer_themosque_footer': footer_themosque_footer,
+        'footer_link_footer': footer_link_footer,
+        'footer_our_mosque_footer': footer_our_mosque_footer,
+        'footer_our_address_footer': footer_our_address_footer,
+        'footer_our_mobile_footer': footer_our_mobile_footer,
+        'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
+        'footer_site_name_footer': footer_site_name_footer,
+        'contact_info': contact_info,
+        'page': page,})
+
+
+def actualizar_best_videos_admin(request, id_best_videos_admin):
+    page = (
+        Page.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if Page.objects.exists() else None
+    )
+    
+    contact_info = (
+        ContactInfo.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if ContactInfo.objects.exists() else None
+    )
+    
+    # Obtener el último footer (si existe)
+    footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
+
+    # Obtener todos los posts (si existen)
+    posts = Post.objects.all() if Post.objects.exists() else None
+
+    # Obtener todas las donaciones (si existen)
+    donations = Donation.objects.all() if Donation.objects.exists() else None
+    
+    # Variables para pasar al template
+    footer_subscribe_footer = footer.subscribe_footer if footer else 'No footer available'
+    footer_description_subscribe_footer = footer.description_subscribe_footer if footer else 'No description available.'
+    footer_subscibe_boton_footer = footer.subscibe_boton_footer if footer else 'Subscribe'
+    footer_themosque_footer = footer.themosque_footer if footer else 'No footer description.'
+    footer_link_footer = footer.link_footer if footer else '#'
+    footer_our_mosque_footer = footer.our_mosque_footer if footer else 'No mosque info.'
+    footer_our_address_footer = footer.our_address_footer if footer else 'No address.'
+    footer_our_mobile_footer = footer.our_mobile_footer if footer else 'No mobile info.'
+    footer_our_mobile_mobile_footer = footer.our_mobile_mobile_footer if footer else 'No phone info.'
+    footer_site_name_footer = footer.site_name_footer if footer else 'Website'
+    
+    best_videos_admin = BestVideos.objects.get(pk=id_best_videos_admin)
+    form = BestVideosForm(request.POST or None, request.FILES or None,  instance=best_videos_admin)
+    if form.is_valid():
+        form.save()
+        return redirect('list_best_videos_admin_view')
+    context = {'best_videos_admin': best_videos_admin, 'form': form,'donations': donations,
+        'posts': posts,
+        'footer': footer,
+        'footer_subscribe_footer': footer_subscribe_footer,
+        'footer_description_subscribe_footer': footer_description_subscribe_footer,
+        'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
+        'footer_themosque_footer': footer_themosque_footer,
+        'footer_link_footer': footer_link_footer,
+        'footer_our_mosque_footer': footer_our_mosque_footer,
+        'footer_our_address_footer': footer_our_address_footer,
+        'footer_our_mobile_footer': footer_our_mobile_footer,
+        'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
+        'footer_site_name_footer': footer_site_name_footer,
+        'contact_info': contact_info,
+        'page': page,}
+    return render(request, 'mosque_web_app/actualizar_best_videos_admin.html', context)
+
+def eliminar_best_videos_admin(request, id_best_videos_admin):
+    best_videos_admin = get_object_or_404(BestVideos, id=id_best_videos_admin)
+    best_videos_admin.delete()
+    messages.success(request, "El best videos admin ha sido eliminado con éxito.")
+    return redirect('list_best_videos_admin_view')  # Reemplaza 'nombre_de_tu_vista' con el nombre de tu vista principal
+
+
+
 
 
 

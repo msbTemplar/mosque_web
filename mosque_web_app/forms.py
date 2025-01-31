@@ -1,6 +1,6 @@
 # forms.py
 from django import forms
-from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, Newsletter, AboutImages, Footer, Donation, Post, Page, ContactInfo
+from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, Newsletter, AboutImages, Footer, Donation, Post, Page, ContactInfo, BestVideos
 import json
 from django.core.exceptions import ValidationError
 
@@ -23,6 +23,71 @@ from django.contrib.auth.models import User
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Ya existe un usuario con este correo electrónico.")
         return email """
+
+class BestVideosForm(forms.ModelForm):
+    class Meta:
+        model = BestVideos
+        fields = [
+            'best_video_ref',
+            'best_video_name',
+            'best_video_description',
+            'best_video_url',
+            'best_video_img_url',
+            'best_video_file',
+            'date_page',
+            'time_page',
+            'day_page',
+            'is_active',
+        ]
+        widgets = {
+            'best_video_ref': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Referencia del Video',
+                'style': 'height: 55px;',
+            }),
+            'best_video_name': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Nombre del Video',
+                'style': 'height: 55px;',
+            }),
+            'best_video_description': forms.Textarea(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Descripción del Video',
+                'style': 'height: 150px;',
+            }),
+            'best_video_url': forms.URLInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Best videos URL',
+                'style': 'height: 55px;',
+            }),
+            'best_video_img_url': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'best_video_file': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'date_page': forms.DateInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Fecha del Video',
+                'type': 'date',
+            }),
+            'time_page': forms.TimeInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Hora del Video',
+                'type': 'time',
+            }),
+            'day_page': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'style': 'margin-top: 10px;',
+            }),
+        }
+
     
 
 class CustomUserCreationForm(UserCreationForm):

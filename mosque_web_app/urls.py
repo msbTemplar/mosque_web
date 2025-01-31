@@ -99,6 +99,11 @@ urlpatterns = [
     path('list_page_admin_view/', views.list_page_admin_view, name='list_page_admin_view'),
     path('actualizar_page_admin/<id_page_admin>', views.actualizar_page_admin, name='actualizar_page_admin'),
     path('eliminar_page_admin/<id_page_admin>', views.eliminar_page_admin, name='eliminar_page_admin'),
+    path('best_videos_admin/', views.best_videos_admin, name='best_videos_admin'),
+    path('list_best_videos_admin_view/', views.list_best_videos_admin_view, name='list_best_videos_admin_view'),
+    path('actualizar_best_videos_admin/<id_best_videos_admin>', views.actualizar_best_videos_admin, name='actualizar_best_videos_admin'),
+    path('eliminar_best_videos_admin/<id_best_videos_admin>', views.eliminar_best_videos_admin, name='eliminar_best_videos_admin'),
+    path('best_videos/', views.best_videos, name='best_videos'),
 
 
 

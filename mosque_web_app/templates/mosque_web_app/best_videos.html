@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+
+        <!-- Hero Start -->
+        <div class="container-fluid hero-header">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-7">
+                        <div class="hero-header-inner animated zoomIn">
+                            <h1 class="display-1 text-dark">Best videos</h1>
+                            <ol class="breadcrumb mb-0">
+                                <li class="breadcrumb-item"><a href="#">Home</a></li>
+                                <li class="breadcrumb-item"><a href="#">Pages</a></li>
+                                <li class="breadcrumb-item text-dark" aria-current="page">Best videos</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Hero End -->
+
+
+        
+        
+        <!-- Testimonial Start -->
+<div class="container-fluid testimonial py-5">
+    <div class="container py-5">
+        <div class="text-center mx-auto mb-5 wow fadeIn" data-wow-delay="0.1s" style="max-width: 700px;">
+            <p class="fs-5 text-uppercase text-primary">Best videos</p>
+            <h1 class="display-3">What People Say About Islam</h1>
+            <p>Total de videos: {{ bestVideos|length }}</p>
+        
+        </div>
+        <div class="owl-carousel testimonial-carousel wow fadeIn" data-wow-delay="0.1s">
+            {% for video in bestVideos %}
+            <div class="testimonial-item">
+                <div class="d-flex mb-3">
+                    <div class="position-relative">
+                        {% if video.best_video_img_url %}
+                        <img src="{{ video.best_video_img_url.url }}" class="img-fluid" alt="{{ video.best_video_name }}">
+                        {% else %}
+                        <img src="{% static 'mosque_web_app/img/default-video.jpg' %}" class="img-fluid" alt="Default Video">
+                        {% endif %}
+                        <div class="btn-md-square bg-primary rounded-circle position-absolute" style="top: 25px; left: -25px;">
+                            <i class="fa fa-play text-dark"></i>
+                        </div>
+                    </div>
+                    <div class="ps-3 my-auto">
+                        <h5 class="mb-0">{{ video.best_video_name }}</h5>
+                        <p class="m-0">{{ video.best_video_ref }}</p>
+                    </div>
+                </div>
+                <div class="testimonial-content">
+                    <div class="d-flex">
+                        {% for star in "★★★★★"|slice:":5" %}
+                        <i class="fas fa-star text-primary"></i>
+                        {% endfor %}
+                    </div>
+                    <p class="fs-5 m-0 pt-3">{{ video.best_video_description }}</p>
+                    {% if video.best_video_url %}
+                    <a href="{{ video.best_video_url }}" target="_blank" class="btn btn-primary mt-3">Watch Video</a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<!-- Testimonial End -->
+
+
+        
+{% endblock %}
