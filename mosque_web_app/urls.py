@@ -104,6 +104,10 @@ urlpatterns = [
     path('actualizar_best_videos_admin/<id_best_videos_admin>', views.actualizar_best_videos_admin, name='actualizar_best_videos_admin'),
     path('eliminar_best_videos_admin/<id_best_videos_admin>', views.eliminar_best_videos_admin, name='eliminar_best_videos_admin'),
     path('best_videos/', views.best_videos, name='best_videos'),
+    path('actualizar_nombre_tab/', views.actualizar_nombre_tab, name='actualizar_nombre_tab'),
+    path('actualizar_nombre_tab_page/', views.actualizar_nombre_tab_page, name='actualizar_nombre_tab_page'),
+    path('tab_admin/', views.tab_admin, name='tab_admin'),
+
 
 
 

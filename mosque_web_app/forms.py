@@ -1,13 +1,13 @@
 # forms.py
 from django import forms
-from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, Newsletter, AboutImages, Footer, Donation, Post, Page, ContactInfo, BestVideos
+from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, Newsletter, AboutImages, Footer, Donation, Post, Page, ContactInfo, BestVideos, Tab, TabPage
 import json
 from django.core.exceptions import ValidationError
 
 from django import forms
 from .models import Testimonial
 import json
-
+from django.utils.text import slugify
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -23,6 +23,133 @@ from django.contrib.auth.models import User
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Ya existe un usuario con este correo electrónico.")
         return email """
+        
+class TabPageForm(forms.ModelForm):
+    class Meta:
+        model = TabPage
+        fields = [
+            'tab_page_name',
+            'tab_page_url_name',
+            'tab_img_url',
+            'tab_file',
+            'tab_date_page',
+            'tab_time_page',
+            'tab_day_page',
+            'is_active',
+        ]
+        widgets = {
+            'tab_page_name': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Nombre de la Página del Tab',
+                'style': 'height: 55px;',
+            }),
+            'tab_page_url_name': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'URL de la Página del Tab',
+                'style': 'height: 55px;',
+            }),
+            'tab_img_url': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'tab_file': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'tab_date_page': forms.DateInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Fecha de la Página del Tab',
+                'type': 'date',
+            }),
+            'tab_time_page': forms.TimeInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Hora de la Página del Tab',
+                'type': 'time',
+            }),
+            'tab_day_page': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'style': 'margin-top: 10px;',
+            }),
+        }
+        
+class TabForm(forms.ModelForm):
+    class Meta:
+        model = Tab
+        fields = [
+            'tab_nombre',
+            'tab_slug',
+            'tab_description',
+            'tab_url',
+            'tab_img_url',
+            'tab_file',
+            'tab_date_page',
+            'tab_time_page',
+            'tab_day_page',
+            'is_active'
+        ]
+        widgets = {
+            'tab_nombre': forms.TextInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Ingrese el nombre',
+                'style': 'height: 55px;',
+            }),
+            'tab_slug': forms.TextInput(attrs={  # Agregar input para el slug
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Slug automático basado en el nombre',
+                'style': 'height: 55px;',
+            }),
+            'tab_description': forms.Textarea(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Ingrese la descripción',
+                'style': 'height: 150px;',
+            }),
+            'tab_url': forms.URLInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Ingrese la URL',
+                'style': 'height: 55px;',
+            }),
+            'tab_img_url': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'tab_file': forms.ClearableFileInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'tab_date_page': forms.DateInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Fecha de BestVideos',
+                'type': 'date',
+            }),
+            'tab_time_page': forms.TimeInput(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'placeholder': 'Hora de BestVideos',
+                'type': 'time',
+            }),
+            'tab_day_page': forms.Select(attrs={
+                'class': 'form-control border-1 bg-light px-4',
+                'style': 'height: 55px;',
+            }),
+            'is_active': forms.CheckboxInput(attrs={
+                'class': 'form-check-input',
+                'style': 'margin-top: 10px;',
+            }),
+        }
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        # Si el slug está vacío, lo genera automáticamente
+        if not instance.tab_slug:
+            instance.tab_slug = slugify(instance.tab_nombre)
+        
+        if commit:
+            instance.save()
+        return instance
+
 
 class BestVideosForm(forms.ModelForm):
     class Meta:

@@ -136,19 +136,35 @@
                     </button>
                     <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
                         <div class="navbar-nav ms-lg-auto mx-xl-auto">
-                            <a href="{% url 'home' %}" class="nav-item nav-link active">Home</a>
+                            <!-- <a href="{% url 'home' %}" class="nav-item nav-link active">Home</a>
                             <a href="{% url 'about' %}" class="nav-item nav-link">About</a>
                             <a href="{% url 'activity' %}" class="nav-item nav-link">Activities</a>
                             <a href="{% url 'event' %}" class="nav-item nav-link">Events</a>
-                            <a href="{% url 'sermon' %}" class="nav-item nav-link">Sermons</a>
+                            <a href="{% url 'sermon' %}" class="nav-item nav-link">Sermons</a> -->
+                            {% for tab in tabs %}
+                                <li class="nav-item">
+                                    <a href="{% url tab.tab_slug %}" class="nav-item nav-link"
+                                    {% if user.is_authenticated %}
+                                    oncontextmenu="activarEdicion(event, this, '{{ tab.id }}')" 
+                                    {% endif %}
+                                    >{{ tab.tab_nombre }}</a>
+                                </li>
+                            {% endfor %}
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Pages</a>
                                 <div class="dropdown-menu m-0 rounded-0">
-                                    <a href="{% url 'blog' %}" class="dropdown-item">Latest Blog</a>
+                                    <!-- <a href="{% url 'blog' %}" class="dropdown-item">Latest Blog</a>
                                     <a href="{% url 'team' %}" class="dropdown-item">Our Team</a>
                                     <a href="{% url 'testimonial' %}" class="dropdown-item">Testimonial</a>
                                     <a href="{% url 'best_videos' %}" class="dropdown-item">Best Videos</a>
-                                    <a href="{% url '404' %}" class="dropdown-item">404 Page</a>
+                                    <a href="{% url '404' %}" class="dropdown-item">404 Page</a> -->
+                                    {% for page in tab_pages %}
+                                        <a href="{% url page.tab_page_url_name %}" class="dropdown-item"
+                                        {% if user.is_authenticated %}
+                                        oncontextmenu="activarEdicionTabPage(event, this, '{{ page.id }}')" 
+                                        {% endif %}
+                                        >{{ page.tab_page_name }}</a>
+                                    {% endfor %}
                                 </div>
                             </div>
                             <a href="{% url 'contact' %}" class="nav-item nav-link">Contact</a>
@@ -518,6 +534,166 @@
 
         <!-- Template Javascript -->
         <script src="{% static 'mosque_web_app/js/main.js' %}"></script>
+
+        <!-- <script>
+            function actualizarNombre(tab_id) {
+                let nuevoNombre = document.getElementById("tab_" + tab_id).value;
+        
+                $.ajax({
+                    url: "{% url 'actualizar_nombre_tab' %}",
+                    type: "POST",
+                    data: {
+                        "tab_id": tab_id,
+                        "nuevo_nombre": nuevoNombre,
+                        "csrfmiddlewaretoken": "{{ csrf_token }}"
+                    },
+                    success: function (data) {
+                        if (data.status === "success") {
+                            alert("Nombre actualizado: " + data.nuevo_nombre);
+                        } else {
+                            alert("Error: " + data.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Error al actualizar el nombre.");
+                    }
+                });
+            }
+        </script> -->
+
+        <script>
+            function activarEdicionTabPage(event, elemento, page_id) {
+                // Prevenir el menú contextual (clic derecho)
+                event.preventDefault();
+            
+                // Verificar si el enlace ya está en modo de edición
+                if (!elemento.hasAttribute('contenteditable')) {
+                    // Habilitar edición
+                    elemento.setAttribute("contenteditable", "true");
+                    elemento.focus();  // Poner foco en el enlace para que se pueda editar
+            
+                    // Cuando el campo pierda el foco (cuando el usuario haga clic fuera del enlace)
+                    elemento.onblur = function() {
+                        actualizarNombreTabPage(page_id, elemento);
+                    };
+            
+                    // Permitir que el usuario presione Enter para guardar el nombre
+                    elemento.onkeydown = function(event) {
+                        if (event.key === "Enter") {
+                            actualizarNombreTabPage(page_id, elemento);
+                        }
+                    };
+                }
+            }
+            
+            // Asegurarse de que el clic izquierdo funciona normalmente
+            document.querySelectorAll('.dropdown-item').forEach(function(elemento) {
+                elemento.addEventListener('click', function(event) {
+                    // Aquí puedes añadir lógica adicional si necesitas manejar el clic izquierdo
+                    // en caso de que quieras realizar alguna acción antes de navegar.
+                });
+            });
+            
+            function actualizarNombreTabPage(page_id, elemento) {
+                let nuevoNombre = elemento.textContent.trim();  // Obtener el nuevo texto dentro del <a>
+            
+                // Realizar la solicitud AJAX para actualizar el nombre
+                $.ajax({
+                    url: "{% url 'actualizar_nombre_tab_page' %}",
+                    type: "POST",
+                    data: {
+                        "page_id": page_id,
+                        "nuevo_nombre": nuevoNombre,
+                        "csrfmiddlewaretoken": "{{ csrf_token }}"
+                    },
+                    success: function (data) {
+                        if (data.status === "success") {
+                            console.log("Nombre actualizado: " + data.nuevo_nombre);
+                        } else {
+                            alert("Error: " + data.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Error al actualizar el nombre.");
+                    }
+                });
+            
+                // Deshabilitar la edición después de guardar el nombre
+                elemento.removeAttribute("contenteditable");
+            }
+            
+            
+            
+            
+            
+        </script>
+
+        <script>
+            function activarEdicion(event, elemento, tab_id) {
+                // Prevenir el menú contextual (clic derecho)
+                event.preventDefault();
+            
+                // Verificar si el enlace ya está en modo de edición
+                if (!elemento.hasAttribute('contenteditable')) {
+                    // Habilitar edición
+                    elemento.setAttribute("contenteditable", "true");
+                    elemento.focus();  // Poner foco en el enlace para que se pueda editar
+            
+                    // Cuando el campo pierda el foco (cuando el usuario haga clic fuera del enlace)
+                    elemento.onblur = function() {
+                        actualizarNombre(tab_id, elemento);
+                    };
+            
+                    // Permitir que el usuario presione Enter para guardar el nombre
+                    elemento.onkeydown = function(event) {
+                        if (event.key === "Enter") {
+                            actualizarNombre(tab_id, elemento);
+                        }
+                    };
+                }
+            }
+            
+            // Asegurarse de que el clic izquierdo funciona normalmente
+            document.querySelectorAll('.nav-link').forEach(function(elemento) {
+                elemento.addEventListener('click', function(event) {
+                    // Aquí puedes añadir lógica adicional si necesitas manejar el clic izquierdo
+                    // en caso de que quieras realizar alguna acción antes de navegar.
+                });
+            });
+            
+            function actualizarNombre(tab_id, elemento) {
+                let nuevoNombre = elemento.textContent.trim();  // Obtener el nuevo texto dentro del <a>
+            
+                // Realizar la solicitud AJAX para actualizar el nombre
+                $.ajax({
+                    url: "{% url 'actualizar_nombre_tab' %}",
+                    type: "POST",
+                    data: {
+                        "tab_id": tab_id,
+                        "nuevo_nombre": nuevoNombre,
+                        "csrfmiddlewaretoken": "{{ csrf_token }}"
+                    },
+                    success: function (data) {
+                        if (data.status === "success") {
+                            console.log("Nombre actualizado: " + data.nuevo_nombre);
+                        } else {
+                            alert("Error: " + data.message);
+                        }
+                    },
+                    error: function () {
+                        alert("Error al actualizar el nombre.");
+                    }
+                });
+            
+                // Deshabilitar la edición después de guardar el nombre
+                elemento.removeAttribute("contenteditable");
+            }
+            
+            
+            
+            
+            
+        </script>
 
         <script>
             function Ver_themosque_description_footer(id,descripcion,url){

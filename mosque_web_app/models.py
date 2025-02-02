@@ -412,3 +412,56 @@ class BestVideos(models.Model):
     
     def __str__(self):
         return f'{self.best_video_ref} - {self.best_video_name}'
+    
+
+class Tab(models.Model):
+    DAYS_OF_WEEK = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday'),
+    ]
+    tab_slug = models.SlugField(unique=True, help_text="Identificador único de la pestaña (ej: home, about, event)")
+    tab_nombre = models.CharField(max_length=100)
+    tab_description = models.TextField()
+    tab_url = models.URLField(blank=True, null=True, verbose_name="tab URL")
+    tab_img_url = models.ImageField(upload_to='tab_img_url_images/', max_length=5500, blank=True, null=True)
+    tab_file = models.FileField(upload_to='tab_file_files/', max_length=5500, blank=True, null=True)  # Para subir
+    tab_date_page = models.DateField(help_text="Fecha de tab", blank=True, null=True)
+    tab_time_page = models.TimeField(help_text="Hora de tab", blank=True, null=True)
+    tab_day_page = models.CharField(max_length=9, choices=DAYS_OF_WEEK)  # Día seleccionado del combo
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Fecha en la que se creó el tab.")
+    updated_at = models.DateTimeField(auto_now=True, help_text="Última vez que se actualizó el tab.")
+    is_active = models.BooleanField(default=True, help_text="Define si este tab está activo y visible.")
+    
+    def __str__(self):
+        return f'{self.tab_nombre} - {self.tab_description}'
+    
+
+class TabPage(models.Model):
+    DAYS_OF_WEEK = [
+        ('Monday', 'Monday'),
+        ('Tuesday', 'Tuesday'),
+        ('Wednesday', 'Wednesday'),
+        ('Thursday', 'Thursday'),
+        ('Friday', 'Friday'),
+        ('Saturday', 'Saturday'),
+        ('Sunday', 'Sunday'),
+    ]
+    tab_page = models.ForeignKey(Tab, on_delete=models.CASCADE)
+    tab_page_name = models.CharField(max_length=100, blank=True, null=True , verbose_name="tab page name")
+    tab_page_url_name = models.CharField(max_length=100, blank=True, null=True , verbose_name="tab page URL name")
+    tab_img_url = models.ImageField(upload_to='tab_page_img_url_images/', max_length=5500, blank=True, null=True)
+    tab_file = models.FileField(upload_to='tab_page_file_files/', max_length=5500, blank=True, null=True)  # Para subir
+    tab_date_page = models.DateField(help_text="Fecha de tab page", blank=True, null=True)
+    tab_time_page = models.TimeField(help_text="Hora de tab page", blank=True, null=True)
+    tab_day_page = models.CharField(max_length=9, choices=DAYS_OF_WEEK)  # Día seleccionado del combo
+    created_at = models.DateTimeField(auto_now_add=True, help_text="Fecha en la que se creó el tab page.")
+    updated_at = models.DateTimeField(auto_now=True, help_text="Última vez que se actualizó el tab page.")
+    is_active = models.BooleanField(default=True, help_text="Define si este tab page está activo y visible.")
+
+    def __str__(self):
+        return self.tab_page_name

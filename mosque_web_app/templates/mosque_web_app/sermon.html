@@ -36,7 +36,13 @@
                     <div class="col-lg-6 col-xl-4">
                         <div class="sermon-item wow fadeIn" data-wow-delay="0.1s">
                             <div class="overflow-hidden p-4 pb-0">
-                                <img src="{{ sermon.img_url_sermon.url }}" class="img-fluid w-100" alt="">
+                                
+                                {% if sermon.img_url_sermon and sermon.img_url_sermon.file %}
+                                    <img src="{{ sermon.img_url_sermon.url }}" class="img-fluid w-100" alt="">
+                                {% else %}
+                                    <!-- Aquí puedes agregar una imagen por defecto o un mensaje si no hay imagen -->
+                                    <img src="{% static 'path/to/default-image.jpg' %}" class="img-fluid w-100" alt="Imagen por defecto">
+                                {% endif %}
                             </div>
                             <div class="p-4">
                                 <div class="sermon-meta d-flex justify-content-between pb-2">
@@ -51,6 +57,10 @@
                                         <a href="" class="me-1"><i class="fas fa-headphones text-muted"></i></a>
                                         <a href="" class="me-1"><i class="fas fa-file-alt text-muted"></i></a>
                                         <a href="" class=""><i class="fas fa-image text-muted"></i></a>
+                                        <a target="_blank" href="{% if sermon.file_sermon %}{{ sermon.file_sermon.url }}{% else %}#{% endif %}" class="me-1">
+                                            <i class="fas fa-file-alt text-muted"></i> 
+                                            {% if sermon.file_sermon %} Download File {% else %} No file available {% endif %}
+                                        </a>
                                     </div>
                                 </div>
                                 <a href="{{ sermon.link_sermon }}" target="_blank" class="d-inline-block h4 lh-sm mb-3">{{ sermon.sermon_title }}</a>

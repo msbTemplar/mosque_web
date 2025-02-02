@@ -5,16 +5,53 @@ from django.contrib.auth import logout
 from django.contrib import messages
 from django.http import JsonResponse
 import locale
-from .forms import ContactMessageForm,AboutForm,ActivityForm, EventForm,Error404Form,SermonForm,BlogForm, TeamMemberForm, TestimonialForm, NewsletterForm, AboutImagesForm, FooterForm, DonationForm, PostForm, ContactInfoForm, PageForm,CustomUserCreationForm, BestVideosForm
-
+from .forms import ContactMessageForm,AboutForm,ActivityForm, EventForm,Error404Form,SermonForm,BlogForm, TeamMemberForm, TestimonialForm, NewsletterForm, AboutImagesForm, FooterForm, DonationForm, PostForm, ContactInfoForm, PageForm,CustomUserCreationForm, BestVideosForm, TabForm
+from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import ValidationError
 import json
-from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, AboutImages, Footer, Donation, Post, ContactInfo, Page, BestVideos
+from .models import ContactMessage, About, Activity, Event, Error404, Sermon, Blog, TeamMember, Testimonial, AboutImages, Footer, Donation, Post, ContactInfo, Page, BestVideos, Tab, TabPage
 from django.contrib.auth.views import LoginView
 from django.views.decorators.cache import cache_page
 # Create your views here.
 
+@csrf_exempt
+def actualizar_nombre_tab(request):
+    if request.method == "POST":
+        tab_id = request.POST.get("tab_id")
+        nuevo_nombre = request.POST.get("nuevo_nombre", "").strip()
 
+        if not nuevo_nombre:
+            return JsonResponse({"status": "error", "message": "El nombre no puede estar vacío."})
+
+        try:
+            tab = Tab.objects.get(id=tab_id)
+            tab.tab_nombre = nuevo_nombre
+            tab.save()
+            return JsonResponse({"status": "success", "nuevo_nombre": nuevo_nombre})
+        except Tab.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "No se encontró la pestaña."}, status=404)
+
+    return JsonResponse({"status": "error", "message": "Método no permitido."}, status=400)
+
+
+@csrf_exempt
+def actualizar_nombre_tab_page(request):
+    if request.method == "POST":
+        page_id = request.POST.get("page_id")
+        nuevo_nombre = request.POST.get("nuevo_nombre", "").strip()
+
+        if not nuevo_nombre:
+            return JsonResponse({"status": "error", "message": "El nombre no puede estar vacío."})
+
+        try:
+            tab_page = TabPage.objects.get(id=page_id)
+            tab_page.tab_page_name = nuevo_nombre
+            tab_page.save()
+            return JsonResponse({"status": "success", "nuevo_nombre": nuevo_nombre})
+        except TabPage.DoesNotExist:
+            return JsonResponse({"status": "error", "message": "No se encontró la pestaña."}, status=404)
+
+    return JsonResponse({"status": "error", "message": "Método no permitido."}, status=400)
 
 
 def register1(request):
@@ -42,6 +79,9 @@ def register(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
 
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -107,6 +147,8 @@ def register(request):
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
         'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,
     })
 
 
@@ -130,6 +172,9 @@ class CustomLoginView(LoginView):
             .order_by('-updated_at', '-created_at')
             .first()
         )
+        tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+        
+        tab_pages = TabPage.objects.all()
 
         # Obtener el último footer (si existe)
         footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -169,6 +214,8 @@ class CustomLoginView(LoginView):
             'footer_site_name_footer': footer_site_name_footer,
             'contact_info': contact_info,
             'page': page,
+            'tabs': tabs,
+            'tab_pages': tab_pages,
         })
 
         return context
@@ -187,6 +234,9 @@ def newsletter(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -249,7 +299,9 @@ def newsletter(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def privacy_policy(request):
     return render(request, 'mosque_web_app/privacy_policy.html')
@@ -271,6 +323,9 @@ def view_404(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -309,7 +364,9 @@ def view_404(request):
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
         'page': page,
-        'error_data': error_data,}
+        'error_data': error_data,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/404.html',context )
 
 def view_404_admin(request):
@@ -324,6 +381,9 @@ def view_404_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -397,7 +457,9 @@ def view_404_admin(request):
             'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
             'footer_site_name_footer': footer_site_name_footer,
             'contact_info': contact_info,
-            'page': page,})
+            'page': page,
+            'tabs': tabs,
+            'tab_pages': tab_pages,})
     else:
         form = Error404Form()
     
@@ -415,7 +477,9 @@ def view_404_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_view_404_admin_view(request):
     page = (
@@ -429,6 +493,9 @@ def list_view_404_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -466,7 +533,9 @@ def list_view_404_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_view_404_admin(request, id_view_404_admin):
     page = (
@@ -480,6 +549,9 @@ def actualizar_view_404_admin(request, id_view_404_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -521,7 +593,9 @@ def actualizar_view_404_admin(request, id_view_404_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_view_404_admin.html', context)
 
 def eliminar_view_404_admin(request, id_view_404_admin):
@@ -542,6 +616,9 @@ def testimonial(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -581,7 +658,9 @@ def testimonial(request):
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
         'page': page,
-        'testimonials': testimonials,}
+        'testimonials': testimonials,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/testimonial.html',context )
 
 def testimonial_admin(request):
@@ -596,6 +675,9 @@ def testimonial_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -705,7 +787,9 @@ def testimonial_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
     else:
         form = TestimonialForm()
     
@@ -723,7 +807,9 @@ def testimonial_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_testimonial_admin_view(request):
     page = (
@@ -737,6 +823,9 @@ def list_testimonial_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -774,7 +863,9 @@ def list_testimonial_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_testimonial_admin(request, id_testimonial_admin):
     page = (
@@ -788,6 +879,9 @@ def actualizar_testimonial_admin(request, id_testimonial_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -829,7 +923,9 @@ def actualizar_testimonial_admin(request, id_testimonial_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_testimonial_admin.html', context)
 
 def eliminar_testimonial_admin(request, id_testimonial_admin):
@@ -851,6 +947,9 @@ def team(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -886,7 +985,9 @@ def team(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/team.html',context )
 
 def team_admin(request):
@@ -901,6 +1002,9 @@ def team_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1014,7 +1118,9 @@ def team_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
     else:
         form = TeamMemberForm()
     
@@ -1032,7 +1138,9 @@ def team_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_team_admin_view(request):
     page = (
@@ -1046,6 +1154,9 @@ def list_team_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1083,7 +1194,9 @@ def list_team_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_team_admin(request, id_team_admin):
     page = (
@@ -1097,6 +1210,9 @@ def actualizar_team_admin(request, id_team_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1138,7 +1254,9 @@ def actualizar_team_admin(request, id_team_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_team_admin.html', context)
 
 def eliminar_team_admin(request, id_team_admin):
@@ -1161,6 +1279,9 @@ def blog(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1199,7 +1320,9 @@ def blog(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page, 'blogs': blogs,}
+        'page': page, 'blogs': blogs,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/blog.html',context )
 
 def blogs_admin(request):
@@ -1214,6 +1337,9 @@ def blogs_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1298,7 +1424,9 @@ def blogs_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
     else:
         form = BlogForm()
     
@@ -1316,7 +1444,9 @@ def blogs_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_blogs_admin_view(request):
     page = (
@@ -1330,6 +1460,9 @@ def list_blogs_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1367,7 +1500,10 @@ def list_blogs_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,
+        })
 
 def actualizar_blogs_admin(request, id_blogs_admin):
     page = (
@@ -1381,6 +1517,9 @@ def actualizar_blogs_admin(request, id_blogs_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1422,7 +1561,9 @@ def actualizar_blogs_admin(request, id_blogs_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_blogs_admin.html', context)
 
 def eliminar_blogs_admin(request, id_blogs_admin):
@@ -1443,6 +1584,9 @@ def sermon(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1480,7 +1624,9 @@ def sermon(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     #context = {'form': ''}
     return render(request, 'mosque_web_app/sermon.html',context )
 
@@ -1496,6 +1642,9 @@ def sermons_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1580,7 +1729,9 @@ def sermons_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
     else:
         form = SermonForm()
     
@@ -1598,7 +1749,9 @@ def sermons_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_sermons_admin_view(request):
     page = (
@@ -1612,6 +1765,9 @@ def list_sermons_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1649,7 +1805,9 @@ def list_sermons_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_sermons_admin(request, id_sermons_admin):
     page = (
@@ -1663,6 +1821,9 @@ def actualizar_sermons_admin(request, id_sermons_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1704,7 +1865,9 @@ def actualizar_sermons_admin(request, id_sermons_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_sermons_admin.html', context)
 
 def eliminar_sermons_admin(request, id_sermons_admin):
@@ -1725,6 +1888,9 @@ def event(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1764,7 +1930,9 @@ def event(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page, 'events': events,}
+        'page': page, 'events': events,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/event.html',context )
 
 def events_admin(request):
@@ -1779,6 +1947,9 @@ def events_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1861,7 +2032,9 @@ def events_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
     else:
         form = EventForm()
     
@@ -1879,7 +2052,9 @@ def events_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_events_admin_view(request):
     page = (
@@ -1893,6 +2068,9 @@ def list_events_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1930,7 +2108,9 @@ def list_events_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_events_admin(request, id_events_admin):
     page = (
@@ -1944,6 +2124,9 @@ def actualizar_events_admin(request, id_events_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -1985,7 +2168,9 @@ def actualizar_events_admin(request, id_events_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_events_admin.html', context)
 
 def eliminar_events_admin(request, id_events_admin):
@@ -2006,6 +2191,9 @@ def activity(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     testimonials = Testimonial.objects.all() if Testimonial.objects.exists() else None
     
@@ -2047,7 +2235,8 @@ def activity(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,'last_activity': last_activity, 'testimonials': testimonials}
+        'page': page,'last_activity': last_activity, 'testimonials': testimonials,'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/activity.html',context )
 
 def activities_admin(request):
@@ -2062,6 +2251,9 @@ def activities_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2158,7 +2350,9 @@ def activities_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
     else:
         form = ActivityForm()
     
@@ -2176,7 +2370,9 @@ def activities_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_activities_admin_view(request):
     page = (
@@ -2190,6 +2386,9 @@ def list_activities_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2227,7 +2426,9 @@ def list_activities_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_activities_admin(request, id_activities_admin):
     page = (
@@ -2241,6 +2442,9 @@ def actualizar_activities_admin(request, id_activities_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2282,7 +2486,9 @@ def actualizar_activities_admin(request, id_activities_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_activities_admin.html', context)
 
 def eliminar_activities_admin(request, id_activities_admin):
@@ -2309,6 +2515,9 @@ def about(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2369,6 +2578,8 @@ def about(request):
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
         'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,
         }
     return render(request, 'mosque_web_app/about.html', context)
 
@@ -2385,6 +2596,9 @@ def about_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2482,7 +2696,9 @@ def about_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
     else:
         form = AboutForm()
     
@@ -2500,7 +2716,9 @@ def about_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_about_admin_view(request):
     page = (
@@ -2514,6 +2732,9 @@ def list_about_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2551,7 +2772,9 @@ def list_about_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_about_admin(request, id_about_admin):
     page = (
@@ -2565,6 +2788,9 @@ def actualizar_about_admin(request, id_about_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2606,7 +2832,9 @@ def actualizar_about_admin(request, id_about_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_about_admin.html', context)
 
 def eliminar_about_admin(request, id_about_admin):
@@ -2627,6 +2855,9 @@ def about_images_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2697,7 +2928,9 @@ def about_images_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
     else:
         form = AboutImagesForm()
     
@@ -2715,7 +2948,9 @@ def about_images_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_about_images_admin_view(request):
     page = (
@@ -2729,6 +2964,9 @@ def list_about_images_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2766,7 +3004,9 @@ def list_about_images_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_about_images_admin(request, id_about_images_admin):
     page = (
@@ -2780,6 +3020,9 @@ def actualizar_about_images_admin(request, id_about_images_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2821,7 +3064,9 @@ def actualizar_about_images_admin(request, id_about_images_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_about_images_admin.html', context)
 
 def eliminar_about_images_admin(request, id_about_images_admin):
@@ -2846,6 +3091,9 @@ def contact(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2920,7 +3168,9 @@ def contact(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
     else:
         form = ContactMessageForm()
     
@@ -2938,7 +3188,9 @@ def contact(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_contact_view(request):
     page = (
@@ -2952,6 +3204,9 @@ def list_contact_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -2989,7 +3244,9 @@ def list_contact_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_contact(request, id_contact):
     page = (
@@ -3003,6 +3260,9 @@ def actualizar_contact(request, id_contact):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3044,7 +3304,9 @@ def actualizar_contact(request, id_contact):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_contact.html', context)
 
 def eliminar_contact(request, id_contact):
@@ -3066,6 +3328,9 @@ def footer_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3185,7 +3450,9 @@ def footer_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
     else:
         form = FooterForm()
@@ -3204,7 +3471,9 @@ def footer_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_footer_admin_view(request):
     page = (
@@ -3218,6 +3487,9 @@ def list_footer_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3255,7 +3527,9 @@ def list_footer_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_footer_admin(request, id_footer_admin):
     page = (
@@ -3269,6 +3543,9 @@ def actualizar_footer_admin(request, id_footer_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3310,7 +3587,9 @@ def actualizar_footer_admin(request, id_footer_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_footer_admin.html', context)
 
 def eliminar_footer_admin(request, id_footer_admin):
@@ -3333,6 +3612,9 @@ def donation_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3402,7 +3684,9 @@ def donation_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
     else:
         form = DonationForm()
@@ -3421,7 +3705,9 @@ def donation_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_donation_admin_view(request):
     page = (
@@ -3435,6 +3721,9 @@ def list_donation_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3472,7 +3761,9 @@ def list_donation_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_donation_admin(request, id_donation_admin):
     page = (
@@ -3486,6 +3777,9 @@ def actualizar_donation_admin(request, id_donation_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3527,7 +3821,9 @@ def actualizar_donation_admin(request, id_donation_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_donation_admin.html', context)
 
 def eliminar_donation_admin(request, id_donation_admin):
@@ -3549,6 +3845,9 @@ def post_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3624,7 +3923,9 @@ def post_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
     else:
         form = PostForm()
@@ -3643,7 +3944,9 @@ def post_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 
 def list_post_admin_view(request):
@@ -3658,6 +3961,9 @@ def list_post_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3695,7 +4001,9 @@ def list_post_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_post_admin(request, id_post_admin):
     page = (
@@ -3709,6 +4017,9 @@ def actualizar_post_admin(request, id_post_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3750,7 +4061,9 @@ def actualizar_post_admin(request, id_post_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_post_admin.html', context)
 
 def eliminar_post_admin(request, id_post_admin):
@@ -3773,6 +4086,9 @@ def contact_info_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3859,6 +4175,8 @@ def contact_info_admin(request):
                 'footer_site_name_footer': footer_site_name_footer,
                 'contact_info': contact_info,
                 'page': page,
+                'tabs': tabs,
+                'tab_pages': tab_pages,
             })
 
     else:
@@ -3878,7 +4196,9 @@ def contact_info_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def list_contact_info_admin_view(request):
     page = (
@@ -3892,6 +4212,9 @@ def list_contact_info_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3929,7 +4252,9 @@ def list_contact_info_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_contact_info_admin(request, id_contact_info_admin):
     page = (
@@ -3943,6 +4268,9 @@ def actualizar_contact_info_admin(request, id_contact_info_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -3984,7 +4312,9 @@ def actualizar_contact_info_admin(request, id_contact_info_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_contact_info_admin.html', context)
 
 def eliminar_contact_info_admin(request, id_contact_info_admin):
@@ -4007,6 +4337,9 @@ def page_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -4093,6 +4426,8 @@ def page_admin(request):
                 'footer_site_name_footer': footer_site_name_footer,
                 'contact_info': contact_info,
                 'page': page,
+                'tabs': tabs,
+                'tab_pages': tab_pages,
             })
     
     else:
@@ -4112,7 +4447,9 @@ def page_admin(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 
 def list_page_admin_view(request):
@@ -4127,6 +4464,9 @@ def list_page_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -4164,7 +4504,9 @@ def list_page_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 def actualizar_page_admin(request, id_page_admin):
     page = (
@@ -4178,6 +4520,9 @@ def actualizar_page_admin(request, id_page_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -4219,7 +4564,8 @@ def actualizar_page_admin(request, id_page_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_page_admin.html', context)
 
 def eliminar_page_admin(request, id_page_admin):
@@ -4241,6 +4587,9 @@ def best_videos(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -4282,7 +4631,9 @@ def best_videos(request):
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
         'page': page,
-        'bestVideos': bestVideos,}
+        'bestVideos': bestVideos,
+        'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/best_videos.html',context )
 
 
@@ -4302,6 +4653,9 @@ def best_videos_admin(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -4380,6 +4734,8 @@ def best_videos_admin(request):
                 'footer_site_name_footer': footer_site_name_footer,
                 'contact_info': contact_info,
                 'page': page,
+                'tabs': tabs,
+                'tab_pages': tab_pages,
             })
     else:
         form = BestVideosForm()
@@ -4402,6 +4758,8 @@ def best_videos_admin(request):
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
         'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,
     })
 
 
@@ -4417,6 +4775,9 @@ def list_best_videos_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -4454,7 +4815,8 @@ def list_best_videos_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,})
+        'page': page,'tabs': tabs,
+        'tab_pages': tab_pages,})
 
 
 def actualizar_best_videos_admin(request, id_best_videos_admin):
@@ -4469,6 +4831,9 @@ def actualizar_best_videos_admin(request, id_best_videos_admin):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -4510,7 +4875,8 @@ def actualizar_best_videos_admin(request, id_best_videos_admin):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/actualizar_best_videos_admin.html', context)
 
 def eliminar_best_videos_admin(request, id_best_videos_admin):
@@ -4518,6 +4884,141 @@ def eliminar_best_videos_admin(request, id_best_videos_admin):
     best_videos_admin.delete()
     messages.success(request, "El best videos admin ha sido eliminado con éxito.")
     return redirect('list_best_videos_admin_view')  # Reemplaza 'nombre_de_tu_vista' con el nombre de tu vista principal
+
+
+def tab_admin(request):
+    # Obtener la página principal activa (si existe)
+    page = (
+        Page.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if Page.objects.exists() else None
+    )
+    
+    # Obtener la información de contacto activa (si existe)
+    contact_info = (
+        ContactInfo.objects.filter(is_active=True)
+        .order_by('-updated_at', '-created_at')
+        .first() if ContactInfo.objects.exists() else None
+    )
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
+    
+    # Obtener el último footer (si existe)
+    footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
+
+    # Obtener todos los videos destacados (si existen)
+    best_videos = BestVideos.objects.filter(is_active=True) if BestVideos.objects.exists() else None
+    
+    # Obtener todos los posts (si existen)
+    posts = Post.objects.all() if Post.objects.exists() else None
+    
+    # Obtener todas las donaciones (si existen)
+    donations = Donation.objects.all() if Donation.objects.exists() else None
+    
+    # Variables para pasar al template
+    footer_subscribe_footer = footer.subscribe_footer if footer else 'No footer available'
+    footer_description_subscribe_footer = footer.description_subscribe_footer if footer else 'No description available.'
+    footer_subscibe_boton_footer = footer.subscibe_boton_footer if footer else 'Subscribe'
+    footer_themosque_footer = footer.themosque_footer if footer else 'No footer description.'
+    footer_link_footer = footer.link_footer if footer else '#'
+    footer_our_mosque_footer = footer.our_mosque_footer if footer else 'No mosque info.'
+    footer_our_address_footer = footer.our_address_footer if footer else 'No address.'
+    footer_our_mobile_footer = footer.our_mobile_footer if footer else 'No mobile info.'
+    footer_our_mobile_mobile_footer = footer.our_mobile_mobile_footer if footer else 'No phone info.'
+    footer_site_name_footer = footer.site_name_footer if footer else 'Website'
+    
+    if request.method == 'POST':
+        form = TabForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Guardar el video en la base de datos
+            form.save()
+            
+            # Obtener los datos del formulario
+            tab_slug = form.cleaned_data['tab_slug']
+            tab_nombre = form.cleaned_data['tab_nombre']
+            tab_description = form.cleaned_data['tab_description']
+            tab_url = form.cleaned_data['tab_url']
+            tab_img_url = form.cleaned_data['tab_img_url']
+            tab_file = form.cleaned_data['tab_file']
+            tab_date_page = form.cleaned_data['tab_date_page']
+            tab_time_page = form.cleaned_data['tab_time_page']
+            tab_day_page = form.cleaned_data['tab_day_page']
+            is_active = form.cleaned_data['is_active']
+            
+            # Preparar el contenido para el correo electrónico
+            email_content = f"""
+            You have received a new Tab submission:
+            
+            tab_slug: {tab_slug}
+            tab_nombre: {tab_nombre}
+            tab_description: {tab_description}
+            tab_url: {tab_url}
+            tab_img_url: {tab_img_url}
+            tab_file: {tab_file}
+            tab_date_page: {tab_date_page}
+            tab_time_page: {tab_time_page}
+            tab_day_page: {tab_day_page}
+            is_active: {is_active}
+            """
+            
+            # Enviar el correo electrónico
+            send_mail(
+                f'New Tab: {tab_nombre}',  # Asunto
+                email_content,  # Cuerpo del correo con todos los detalles
+                'msb.caixa@gmail.com',  # Correo electrónico del remitente
+                ['msb.caixa@gmail.com','msb.tesla@gmail.com', 'msb.coin@gmail.com', 'msb.duck@gmail.com', 'msebti2@gmail.com', 'papioles@gmail.com', 'msb.motive@gmail.com', 'msb.acer@gmail.com'],  # Correos de destino
+            )
+            
+            return render(request, 'mosque_web_app/tab_admin.html', {
+                'tab_slug': tab_slug,
+                'tab_nombre': tab_nombre,
+                'tab_description': tab_description,
+                'donations': donations,
+                'posts': posts,
+                'footer': footer,
+                'footer_subscribe_footer': footer_subscribe_footer,
+                'footer_description_subscribe_footer': footer_description_subscribe_footer,
+                'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
+                'footer_themosque_footer': footer_themosque_footer,
+                'footer_link_footer': footer_link_footer,
+                'footer_our_mosque_footer': footer_our_mosque_footer,
+                'footer_our_address_footer': footer_our_address_footer,
+                'footer_our_mobile_footer': footer_our_mobile_footer,
+                'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
+                'footer_site_name_footer': footer_site_name_footer,
+                'contact_info': contact_info,
+                'page': page,
+                'tabs': tabs,
+                'tab_pages': tab_pages,
+            })
+    else:
+        form = TabForm()
+    
+    return render(request, 'mosque_web_app/tab_admin.html', {
+        'form': form,
+        'best_videos': best_videos,
+        'donations': donations,
+        'posts': posts,
+        'footer': footer,
+        'footer_subscribe_footer': footer_subscribe_footer,
+        'footer_description_subscribe_footer': footer_description_subscribe_footer,
+        'footer_subscibe_boton_footer': footer_subscibe_boton_footer,
+        'footer_themosque_footer': footer_themosque_footer,
+        'footer_link_footer': footer_link_footer,
+        'footer_our_mosque_footer': footer_our_mosque_footer,
+        'footer_our_address_footer': footer_our_address_footer,
+        'footer_our_mobile_footer': footer_our_mobile_footer,
+        'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
+        'footer_site_name_footer': footer_site_name_footer,
+        'contact_info': contact_info,
+        'page': page,
+        'tabs': tabs,
+        'tab_pages': tab_pages,
+    })
+
+
+
 
 
 
@@ -4538,6 +5039,10 @@ def mosque_web_admin_view(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -4574,7 +5079,8 @@ def mosque_web_admin_view(request):
         'footer_our_mobile_mobile_footer': footer_our_mobile_mobile_footer,
         'footer_site_name_footer': footer_site_name_footer,
         'contact_info': contact_info,
-        'page': page,}
+        'page': page,'tabs': tabs,
+        'tab_pages': tab_pages,}
     return render(request, 'mosque_web_app/mosque_web_admin.html',context )
 
 def custom_logout_view(request):
@@ -4604,6 +5110,10 @@ def home(request):
         .order_by('-updated_at', '-created_at')
         .first() if ContactInfo.objects.exists() else None
     )
+    
+    tabs = Tab.objects.filter(is_active=True)  # Solo pestañas activas
+    
+    tab_pages = TabPage.objects.all()
     
     # Obtener el último footer (si existe)
     footer = Footer.objects.latest('created_at') if Footer.objects.exists() else None
@@ -4682,6 +5192,6 @@ def home(request):
         'contact_info': contact_info,
         'page': page,
         'about': about, 'abouts_images': abouts_images, 'team_members': team_members, 'president': president,
-        'other_members': other_members, 'testimonials': testimonials, 'last_activity': last_activity, 'events': events, 'sermons': sermons, 'blogs': blogs,
+        'other_members': other_members, 'testimonials': testimonials, 'last_activity': last_activity, 'events': events, 'sermons': sermons, 'blogs': blogs,'tabs': tabs,'tab_pages': tab_pages,
     }
     return render(request, 'mosque_web_app/home.html', context)
